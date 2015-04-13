@@ -7,7 +7,7 @@ quickpay-ruby-client
 
 Add to your Gemfile
   
-  $ gem 'quickpay-ruby-client'
+    $ gem 'quickpay-ruby-client'
 
 or install from Rubygems:
   
