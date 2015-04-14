@@ -40,7 +40,7 @@ describe Quickpay::Request do
   end
   
   describe '.create_response' do
-    context 'with raw' do
+    context 'when raw is true' do
       it 'should return raw response' do 
         body = { "id" => 100 }
         stub_request(:get, "https://api.quickpay.net/dummy").
@@ -54,8 +54,8 @@ describe Quickpay::Request do
       end
     end
     
-    context 'without raw' do
-      it 'should return response' do
+    context 'when raw is false' do
+      it 'should return hash' do
         body = { "id" => 100 }
         stub_request(:get, "https://api.quickpay.net/dummy").
          to_return(:status => 200, :body => body.to_json, :headers => {})
@@ -70,7 +70,7 @@ describe Quickpay::Request do
   
   describe '.raise_error' do
     it 'should raise error' do
-      expect{
+      expect {
         handler.send(:raise_error, "error", 400)
       }.to raise_error(Quickpay::BadRequest)
 
