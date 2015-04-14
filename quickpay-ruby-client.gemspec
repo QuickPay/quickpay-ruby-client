@@ -6,8 +6,8 @@ require 'quickpay/version'
 Gem::Specification.new do |spec|
   spec.name          = "quickpay-ruby-client"
   spec.version       = Quickpay::VERSION
-  spec.authors       = ["Dinesh Yadav"]
-  spec.email         = ["dinesh1042@gmail.com"]
+  spec.authors       = ["QuickPay Developers"]
+  spec.email         = ["support@quickpay.net"]
   
   spec.summary       = "Ruby client for QuickPay API"
   spec.description   = "Embed QuickPay's secure payments directly into your Ruby applications. more at https://tech.quickpay.net"

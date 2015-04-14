@@ -12,39 +12,56 @@ describe Quickpay::Request do
   describe '.request' do
     context 'when method is get' do
       it {
-        stub_qp_request(:get, '/dummy', 200, { :id => 100 })
+        stub_json_request(:get, '/dummy', 200, { :id => 100 })
         response = handler.request(:get, '/dummy')
         expect(response['id']).to eq(100)
         expect_qp_request(:get, "/dummy", "")
       }
     end
     
-    context 'when method is post/patch' do
+    context 'when method is post/patch/put' do
       it {
-        stub_qp_request(:post, '/dummy', 200, { :id => 100 })
+        stub_json_request(:post, '/dummy', 200, { :id => 100 })
         response = handler.request(:post, '/dummy', { currency: 'DKK' })
         expect(response['id']).to eq(100)
         expect_qp_request(:post, "/dummy", { currency: 'DKK' })        
       }
+      
+      it {
+        stub_json_request(:put, '/dummy', 200, { :id => 100 })
+        response = handler.request(:put, '/dummy', { currency: 'DKK' })
+        expect(response['id']).to eq(100)
+        expect_qp_request(:put, "/dummy", { currency: 'DKK' })        
+      }
+      
+      it {
+        stub_json_request(:patch, '/dummy', 200, { :id => 100 })
+        response = handler.request(:patch, '/dummy', { currency: 'DKK' })
+        expect(response['id']).to eq(100)
+        expect_qp_request(:patch, "/dummy", { currency: 'DKK' })        
+      }
+      
     end
     
     context 'when method is delete' do
       it {
-        stub_qp_request(:delete, '/dummy', 200, { :id => 100 })
+        stub_json_request(:delete, '/dummy?currency=DKK', 200, { :id => 100 })
         response = handler.request(:delete, '/dummy', { currency: 'DKK' })
         expect(response['id']).to eq(100)
-        expect_qp_request(:delete, "/dummy", "")        
+        expect_qp_request(:delete, "/dummy?currency=DKK", "")        
       }      
     end
     
   end
   
   describe '.create_response' do
+
     context 'when raw is true' do
-      it 'should return raw response' do 
+      it 'should return raw response', wip: true do 
         body = { "id" => 100 }
         stub_request(:get, "https://api.quickpay.net/dummy").
-         to_return(:status => 200, :body => body.to_json, :headers => {})
+         to_return(:status => 200, :body => body.to_json, 
+            :headers => { "Content-Type" => 'application/json'})
          
         response = handler.create_response(true, handler.class.get('/dummy'))
         
@@ -54,15 +71,28 @@ describe Quickpay::Request do
       end
     end
     
-    context 'when raw is false' do
-      it 'should return hash' do
+    context 'when raw is not present' do
+      it 'should return http body' do
         body = { "id" => 100 }
         stub_request(:get, "https://api.quickpay.net/dummy").
-         to_return(:status => 200, :body => body.to_json, :headers => {})
+         to_return(:status => 200, :body => body.to_json, 
+          :headers => {"Content-Type" => 'application/json' })
          
         response = handler.create_response(false, handler.class.get('/dummy'))
         
         expect(response).to include("id" => 100)      
+      end  
+    end  
+    
+    context 'when content-type is not json' do
+      it 'should return raw response' do
+        body = 'foobar'
+        stub_request(:get, "https://api.quickpay.net/dummy").
+         to_return(:status => 200, :body => 'foobar')
+         
+        response = handler.create_response(false, handler.class.get('/dummy'))
+        
+        expect(response).to eq("foobar")      
       end  
     end
     

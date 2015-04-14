@@ -13,10 +13,10 @@ or install from Rubygems:
   
     $ gem install quickpay-ruby-client
   
-It is currently tested with Ruby 1.9
+It is currently tested with Ruby ( >= 2.1.x)
 
 * MPI
-* Rubinius
+* Rubinius (2.0)
 
 ## Usage
 
@@ -43,7 +43,7 @@ client = Quickpay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD
 
 ### API Calls
 
-You can afterwards call any method described in QuickPay api with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `patch` and `delete`.
+You can afterwards call any method described in QuickPay api with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch` and `delete`.
 
 ```
 client.get("/activities").each do |activity|
@@ -69,7 +69,7 @@ end
 
 ### Handling API exceptions
 
-By default `(get|post|delete|patch)` will return JSON parsed body on success (i.e. non `4xx` response code) otherwise it will raise appropriate error. Your code should handle the errors appropriately. Following error codes are supported currently:
+By default `(get|post|patch|put|delete)` will return JSON parsed body on success (i.e. `2xx` response code) otherwise it will raise appropriate error. Your code should handle the errors appropriately. Following error codes are supported currently:
 
 
 Response status |  Error    |
@@ -95,4 +95,4 @@ rescue Quickpay::Error => e
 end
 ```
 
-You can more about api responses at: [Link](http://tech.quickpay.net/api/)
+You can read more about api responses at: [Link](http://tech.quickpay.net/api/)

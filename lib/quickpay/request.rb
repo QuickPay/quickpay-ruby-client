@@ -10,10 +10,11 @@ module Quickpay
     
     def request method, path, data = {}
       raw = data.delete(:raw)
+      
       options = case method
-                when :get
+                when :get, :delete
                   { query: data }
-                when :post, :patch
+                when :post, :patch, :put
                   { body: data }
                 end || {}
       
@@ -23,15 +24,12 @@ module Quickpay
     end
     
     def create_response raw, res
-      response = res.parsed_response      
       if raw
-        [res.code, response, res.headers]
+        [res.code, res.body, res.headers]
       else
-        raise_error(response, res.code) if res.code.to_s =~ /4\d\d/
-        
-        response.kind_of?(String) ? 
-          JSON.parse(response) : 
-          response
+        response = res.parsed_response
+        raise_error(response, res.code) if res.code >= 400
+        response
       end
     end
     
@@ -52,7 +50,12 @@ module Quickpay
     end
     
     private
-    
+      
+      def json_response? res
+        res.headers.key?('content-type') && 
+          res.headers['content-type'].include?('application/json')
+      end
+      
       def error_description msg
         msg
       end

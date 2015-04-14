@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Quickpay::Client, wip: true do
+describe Quickpay::Client do
   let(:secret){ 'test:test' }
   let(:client) { Quickpay::Client.new(secret) }
   
