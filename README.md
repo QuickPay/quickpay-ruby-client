@@ -96,4 +96,4 @@ rescue Quickpay::Error => e
 end
 ```
 
-You can read more about api responses at: [Link](http://tech.quickpay.net/api/)
+You can read more about api responses at [http://tech.quickpay.net/api/](http://tech.quickpay.net/api).
