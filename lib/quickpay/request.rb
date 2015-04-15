@@ -51,15 +51,9 @@ module Quickpay
     
     private
       
-      def json_response? res
-        res.headers.key?('content-type') && 
-          res.headers['content-type'].include?('application/json')
-      end
-      
       def error_description msg
         msg
       end
-      
       
       def headers
         {

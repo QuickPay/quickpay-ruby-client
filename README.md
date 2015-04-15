@@ -15,7 +15,7 @@ or install from Rubygems:
   
 It is currently tested with Ruby ( >= 2.1.x)
 
-* MPI
+* MRI
 * Rubinius (2.0)
 
 ## Usage
