@@ -137,7 +137,7 @@ describe Quickpay::Request do
     end
 
     it 'should have no authorization with empty secret' do
-      expect(Quickpay::Request.new('').send(:headers)['Authorization']).to be_nil
+      expect(Quickpay::Request.new().send(:headers)['Authorization']).to be_nil
     end
   end
   

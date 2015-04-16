@@ -3,7 +3,7 @@ module Quickpay
   class Request
     include HTTParty
     
-    def initialize secret
+    def initialize (secret = nil)
       @secret = secret
       self.class.base_uri(BASE_URI)
     end
@@ -60,7 +60,7 @@ module Quickpay
           'User-Agent'     => user_agent,
           'Accept-Version' => "v#{Quickpay::API_VERSION}"
         }
-        heads['Authorization'] = "Basic #{authorization}" if @secret != ""
+        heads['Authorization'] = "Basic #{authorization}" if @secret != nil
         heads
       end
 

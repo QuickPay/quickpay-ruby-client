@@ -25,7 +25,14 @@ Before doing anything you should register yourself with QuickPay and get access 
 
 ### Create a new client
 
-First you should create a client instance with `api_key` or login credentials provided by QuickPay. 
+First you should create a client instance that is anonymous or authorized with `api_key` or login credentials provided by QuickPay. 
+
+To initialise an anonymous client:
+
+```
+require 'quickpay'
+client = Quickpay::Client.new()
+```
 
 To initialise a client with QuickPay Api Key:
 

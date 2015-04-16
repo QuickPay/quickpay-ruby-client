@@ -3,7 +3,7 @@ module Quickpay
   class Client  
     attr_accessor :credential
     
-    def initialize credential
+    def initialize (credential = nil)
       @credential = credential
     end
     
