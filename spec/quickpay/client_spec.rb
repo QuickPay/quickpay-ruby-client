@@ -7,6 +7,10 @@ describe Quickpay::Client do
   it 'has credentials' do
     expect(client.credential).to eq(secret)  
   end
+
+  it 'has not credentials' do
+    expect(Quickpay::Client.new.credential).to be_nil
+  end
   
   it 'should proxy get' do
     allow_any_instance_of(Quickpay::Request).to receive(:request).with(:get, '/dummy')
