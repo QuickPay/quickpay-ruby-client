@@ -56,13 +56,14 @@ module Quickpay
       end
       
       def headers
-        {
+        heads = {
           'User-Agent'     => user_agent,
-          'Authorization'  => "Basic #{authorization}",
           'Accept-Version' => "v#{Quickpay::API_VERSION}"
         }
+        heads['Authorization'] = "Basic #{authorization}" if @secret != ""
+        heads
       end
-      
+
       def user_agent
         user_agent = "quickpay-ruby-client, v#{Quickpay::VERSION}"
         user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"

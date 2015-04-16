@@ -135,6 +135,10 @@ describe Quickpay::Request do
       expect(handler.send(:headers)['Authorization']).not_to be_nil
       expect(handler.send(:headers)['User-Agent']).not_to be_nil
     end
+
+    it 'should have no authorization with empty secret' do
+      expect(Quickpay::Request.new('').send(:headers)['Authorization']).to be_nil
+    end
   end
   
 end
