@@ -48,6 +48,13 @@ require 'quickpay'
 client = QuickPay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
 ```
 
+To pass request specific headers:
+
+```
+client = Quickpay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']", 
+                 :headers => { 'QuickPay-Callback-URL' => 'https://webshop.com' }) 
+```
+
 
 ### API Calls
 

@@ -33,6 +33,16 @@ describe QuickPay::Request do
       }
     end
     
+    context 'headers' do
+      it 'should include extra headers in request' do
+        extra_headers = { 'callback-url' => 'http://test.me/thanks' }
+
+        stub_qp_request(:post, '/dummy', 200, "", extra_headers)
+        handler.request(:post, '/dummy', :headers => extra_headers)
+        
+      end
+    end
+
     context 'when method is post/patch/put' do
       it {
         stub_json_request(:post, '/dummy', 200, { :id => 100 })
@@ -54,7 +64,6 @@ describe QuickPay::Request do
         expect(response['id']).to eq(100)
         expect_qp_request(:patch, "/dummy", { currency: 'DKK' })        
       }
-      
     end
     
     context 'when method is delete' do
@@ -131,7 +140,7 @@ describe QuickPay::Request do
     end
     
   end
-  
+
   describe 'error_description' do
     it { expect(handler.send(:error_description, 'test')).to eq('test') }
   end
@@ -153,6 +162,5 @@ describe QuickPay::Request do
     it 'should have no authorization with empty secret' do
       expect(QuickPay::Request.new({}).send(:headers)['Authorization']).to be_nil
     end
-  end
-  
+  end  
 end
