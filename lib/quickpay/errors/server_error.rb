@@ -1,5 +1,5 @@
 
-module Quickpay
+module QuickPay
   class ServerError < Error
       
   end

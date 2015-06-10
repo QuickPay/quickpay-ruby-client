@@ -1,5 +1,5 @@
 
-module Quickpay
+module QuickPay
   BASE_URI    = 'https://api.quickpay.net'
   API_VERSION = 10
   

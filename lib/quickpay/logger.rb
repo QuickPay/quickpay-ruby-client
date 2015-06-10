@@ -1,6 +1,6 @@
 require 'logger'
 
-module Quickpay
+module QuickPay
   class << self
     attr_writer :logger
     

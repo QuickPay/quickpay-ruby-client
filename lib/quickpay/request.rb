@@ -1,5 +1,5 @@
 
-module Quickpay
+module QuickPay
   class Request
     include HTTParty
     
@@ -19,7 +19,7 @@ module Quickpay
                 end || {}
       
       options = options.merge(:headers => headers)
-      Quickpay.logger.debug { "#{method.to_s.upcase} #{BASE_URI}#{path} #{options}" }
+      QuickPay.logger.debug { "#{method.to_s.upcase} #{BASE_URI}#{path} #{options}" }
       create_response(raw, self.class.send(method, path, options))
     end
     
@@ -41,9 +41,9 @@ module Quickpay
         begin
           require "quickpay/errors/#{code}"
           class_name = code.split('_').map(&:capitalize).join('')
-          Quickpay.const_get(class_name)
+          QuickPay.const_get(class_name)
         rescue LoadError, NameError
-          Quickpay::Error
+          QuickPay::Error
         end
         
       fail klass.new(*args), error_description(body)
@@ -58,14 +58,14 @@ module Quickpay
       def headers
         heads = {
           'User-Agent'     => user_agent,
-          'Accept-Version' => "v#{Quickpay::API_VERSION}"
+          'Accept-Version' => "v#{QuickPay::API_VERSION}"
         }
         heads['Authorization'] = "Basic #{authorization}" if @secret != nil
         heads
       end
 
       def user_agent
-        user_agent = "quickpay-ruby-client, v#{Quickpay::VERSION}"
+        user_agent = "quickpay-ruby-client, v#{QuickPay::VERSION}"
         user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
         if defined?(RUBY_ENGINE)
           user_agent += ", #{RUBY_ENGINE}"
