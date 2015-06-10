@@ -1,5 +1,5 @@
 
-module Quickpay
+module QuickPay
   class NotAcceptable < Error
       
   end

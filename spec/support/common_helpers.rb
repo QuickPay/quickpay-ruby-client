@@ -1,4 +1,4 @@
-module Quickpay
+module QuickPay
   module CommonHelpers
     
     def secret
@@ -6,7 +6,7 @@ module Quickpay
     end
     
     def url_with_secret
-      "https://#{secret}@#{Quickpay::BASE_URI.split('://').last}"  
+      "https://#{secret}@#{QuickPay::BASE_URI.split('://').last}"  
     end
     
     def stub_qp_request(method, path, status, response_body, response_headers = {})
@@ -33,7 +33,7 @@ module Quickpay
     end    
     
     def headers options = {}
-      user_agent = "quickpay-ruby-client, v#{Quickpay::VERSION}"
+      user_agent = "quickpay-ruby-client, v#{QuickPay::VERSION}"
       user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
       if defined?(RUBY_ENGINE)
         user_agent += ", #{RUBY_ENGINE}"

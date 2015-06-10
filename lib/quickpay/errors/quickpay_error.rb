@@ -1,4 +1,4 @@
-module Quickpay
+module QuickPay
 
   class Error < StandardError
     attr_reader :code, :status, :body

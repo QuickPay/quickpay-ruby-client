@@ -5,7 +5,7 @@ require 'quickpay/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "quickpay-ruby-client"
-  spec.version       = Quickpay::VERSION
+  spec.version       = QuickPay::VERSION
   spec.authors       = ["QuickPay Developers"]
   spec.email         = ["support@quickpay.net"]
   

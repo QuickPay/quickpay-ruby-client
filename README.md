@@ -31,21 +31,21 @@ To initialise an anonymous client:
 
 ```
 require 'quickpay'
-client = Quickpay::Client.new()
+client = QuickPay::Client.new
 ```
 
 To initialise a client with QuickPay Api Key:
 
 ```
 require 'quickpay'
-client = Quickpay::Client.new(":#{ENV['QUICKPAY_API_KEY']")
+client = QuickPay::Client.new(":#{ENV['QUICKPAY_API_KEY']")
 ```
 
 Or you can provide login credentials like:
 
 ```
 require 'quickpay'
-client = Quickpay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
+client = QuickPay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
 ```
 
 
@@ -82,23 +82,23 @@ By default `(get|post|patch|put|delete)` will return JSON parsed body on success
 
 Response status |  Error    |
 ----------------| ----------|
-`400` | `Quickpay::BadRequest`
-`401` | `Quickpay::Unauthorized` 
-`402` | `Quickpay::PaymentRequired`
-`403` | `Quickpay::Forbidden`
-`404` | `Quickpay::NotFound`
-`405` | `Quickpay::MethodNotAllowed`
-`406` | `Quickpay::NotAcceptable`
-`409` | `Quickpay::Conflict`
-`500` | `Quickpay::ServerError`
+`400` | `QuickPay::BadRequest`
+`401` | `QuickPay::Unauthorized` 
+`402` | `QuickPay::PaymentRequired`
+`403` | `QuickPay::Forbidden`
+`404` | `QuickPay::NotFound`
+`405` | `QuickPay::MethodNotAllowed`
+`406` | `QuickPay::NotAcceptable`
+`409` | `QuickPay::Conflict`
+`500` | `QuickPay::ServerError`
 
-All exceptions inherits `Quickpay::Error`, so you can listen for any api error like:
+All exceptions inherits `QuickPay::Error`, so you can listen for any api error like:
 
 ```
 begin
   client.post("/payments", :currency => :DKK, :order_id => '1212')
   ... 
-rescue Quickpay::Error => e
+rescue QuickPay::Error => e
   puts e.body
 end
 ```
