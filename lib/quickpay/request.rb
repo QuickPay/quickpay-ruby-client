@@ -3,9 +3,9 @@ module QuickPay
   class Request
     include HTTParty
     
-    def initialize (secret = nil)
-      @secret = secret
-      self.class.base_uri(BASE_URI)
+    def initialize (options)
+      @secret = options[:secret]
+      self.class.base_uri(options[:base_uri] || BASE_URI)
     end
     
     def request method, path, data = {}
@@ -19,7 +19,7 @@ module QuickPay
                 end || {}
       
       options = options.merge(:headers => headers)
-      QuickPay.logger.debug { "#{method.to_s.upcase} #{BASE_URI}#{path} #{options}" }
+      QuickPay.logger.debug { "#{method.to_s.upcase} #{base_uri}#{path} #{options}" }
       create_response(raw, self.class.send(method, path, options))
     end
     
@@ -51,6 +51,10 @@ module QuickPay
     
     private
       
+      def base_uri
+        self.class.default_options[:base_uri]
+      end
+
       def error_description msg
         msg
       end

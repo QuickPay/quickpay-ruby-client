@@ -1,11 +1,25 @@
 require 'spec_helper'
 
 describe QuickPay::Request do
-  let(:handler) { QuickPay::Request.new(secret) } 
+  let(:req_params){ { secret: secret }} 
+  let(:handler) { QuickPay::Request.new(req_params) } 
   
   describe '.new' do
     it 'should set base uri' do
       expect(handler.class.default_options[:base_uri]).to eq(QuickPay::BASE_URI)
+    end
+
+    context 'override base_uri' do
+      let!(:req_params){ {secret: secret, base_uri: "http://test.me" }}
+      it {
+        expect(handler.class.default_options[:base_uri]).to eq('http://test.me')    
+
+        stub_request(:get, "http://foo:bar@test.me/dummy").
+          with(:headers => headers).
+          to_return(:status => 200, :body => "", :headers => {})
+
+        handler.request(:get, '/dummy')
+      }
     end
   end
   
@@ -137,7 +151,7 @@ describe QuickPay::Request do
     end
 
     it 'should have no authorization with empty secret' do
-      expect(QuickPay::Request.new().send(:headers)['Authorization']).to be_nil
+      expect(QuickPay::Request.new({}).send(:headers)['Authorization']).to be_nil
     end
   end
   
