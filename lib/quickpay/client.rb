@@ -1,14 +1,18 @@
 
 module QuickPay
+  
+  class << self
+    attr_accessor :base_uri
+  end
+
   class Client  
     attr_accessor :options
     
-    def initialize(*args)
-      if args.length > 1
-        @options = args.dup
-      else
-        @options = { secret: args[0] }
-      end
+    def initialize(secret = nil, opts = {})
+      opts[:secret]   ||= secret
+      opts[:base_uri] ||= (QuickPay.base_uri || QuickPay::BASE_URI)
+
+      @options = opts.dup
     end
     
     def credential

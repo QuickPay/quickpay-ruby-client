@@ -10,7 +10,7 @@ describe QuickPay::Request do
     end
 
     context 'override base_uri' do
-      let!(:req_params){ {secret: secret, base_uri: "http://test.me" }}
+      let!(:req_params){ { secret: secret, base_uri: "http://test.me" }}
       it {
         expect(handler.class.default_options[:base_uri]).to eq('http://test.me')    
 
@@ -19,6 +19,11 @@ describe QuickPay::Request do
           to_return(:status => 200, :body => "", :headers => {})
 
         handler.request(:get, '/dummy')
+      }
+
+      it {
+        QuickPay.base_uri = 'http://test.me'
+        expect(handler.send(:base_uri)).to eq('http://test.me') 
       }
     end
   end
@@ -160,7 +165,7 @@ describe QuickPay::Request do
     end
 
     it 'should have no authorization with empty secret' do
-      expect(QuickPay::Request.new({}).send(:headers)['Authorization']).to be_nil
+      expect(QuickPay::Request.new.send(:headers)['Authorization']).to be_nil
     end
   end  
 end

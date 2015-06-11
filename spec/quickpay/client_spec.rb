@@ -32,6 +32,5 @@ describe QuickPay::Client do
     client.delete("/dummy")
   end
   
-  
 end
   

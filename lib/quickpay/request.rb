@@ -3,7 +3,7 @@ module QuickPay
   class Request
     include HTTParty
     
-    def initialize (options)
+    def initialize (options = {})
       @secret = options[:secret]
       self.class.base_uri(options[:base_uri] || BASE_URI)
     end
