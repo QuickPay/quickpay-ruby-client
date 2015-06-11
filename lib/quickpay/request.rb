@@ -10,7 +10,8 @@ module QuickPay
     
     def request method, path, data = {}
       raw = data.delete(:raw)
-      
+      req_headers = headers.merge(data.delete(:headers) || {})
+
       options = case method
                 when :get, :delete
                   { query: data }
@@ -18,7 +19,7 @@ module QuickPay
                   { body: data }
                 end || {}
       
-      options = options.merge(:headers => headers)
+      options = options.merge(:headers => headers.merge(req_headers))
       QuickPay.logger.debug { "#{method.to_s.upcase} #{base_uri}#{path} #{options}" }
       create_response(raw, self.class.send(method, path, options))
     end

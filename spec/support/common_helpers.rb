@@ -9,19 +9,21 @@ module QuickPay
       "https://#{secret}@#{QuickPay::BASE_URI.split('://').last}"  
     end
     
-    def stub_qp_request(method, path, status, response_body, response_headers = {})
+    def stub_qp_request(method, path, status, response_body, req_headers = {}, response_headers = {})
       url = URI.join(url_with_secret, path)
       
       stub_request(method, url)
-        .with(:headers => headers)
-        .to_return(:status => status, 
+        .with(:headers => headers.merge(req_headers))
+        .to_return(:status  => status, 
                    :headers => response_headers, 
-                   :body => response_body.to_json)
+                   :body    => response_body.to_json)
         
     end
     
     def stub_json_request *args
-      stub_qp_request(*(args << { 'Content-Type' => 'application/json' }))  
+      args << {}
+      args << { 'Content-Type' => 'application/json' }
+      stub_qp_request(*args)  
     end
     
     def expect_qp_request(method, path, body)
