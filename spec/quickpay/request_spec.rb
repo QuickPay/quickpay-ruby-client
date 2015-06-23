@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe QuickPay::Request do
+describe QuickPay::API::Request do
   let(:req_params){ { secret: secret }} 
-  let(:handler) { QuickPay::Request.new(req_params) } 
+  let(:handler) { QuickPay::API::Request.new(req_params) } 
   
   describe '.new' do
     it 'should set base uri' do
@@ -130,18 +130,18 @@ describe QuickPay::Request do
     it 'should raise error' do
       expect {
         handler.send(:raise_error, "error", 400)
-      }.to raise_error(QuickPay::BadRequest)
+      }.to raise_error(QuickPay::API::BadRequest)
 
       expect{
         handler.send(:raise_error, "error", 401)
-      }.to raise_error(QuickPay::Unauthorized)
+      }.to raise_error(QuickPay::API::Unauthorized)
       
     end
     
     it 'should raise general error if not recognized' do
       expect {
         handler.send(:raise_error, "error", 800)
-      }.to raise_error(QuickPay::Error)      
+      }.to raise_error(QuickPay::API::Error)      
     end
     
   end
@@ -165,7 +165,7 @@ describe QuickPay::Request do
     end
 
     it 'should have no authorization with empty secret' do
-      expect(QuickPay::Request.new.send(:headers)['Authorization']).to be_nil
+      expect(QuickPay::API::Request.new.send(:headers)['Authorization']).to be_nil
     end
   end  
 end

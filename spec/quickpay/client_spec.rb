@@ -1,34 +1,34 @@
 require 'spec_helper'
 
-describe QuickPay::Client do
+describe QuickPay::API::Client do
   let(:secret){ 'test:test' }
-  let(:client) { QuickPay::Client.new(secret) }
+  let(:client) { QuickPay::API::Client.new(secret) }
   
   it 'has credentials' do
     expect(client.credential).to eq(secret)  
   end
 
   it 'has not credentials' do
-    expect(QuickPay::Client.new.credential).to be_nil
+    expect(QuickPay::API::Client.new.credential).to be_nil
   end
   
   it 'should proxy get' do
-    allow_any_instance_of(QuickPay::Request).to receive(:request).with(:get, '/dummy')
+    allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:get, '/dummy')
     client.get("/dummy")
   end
 
   it 'should proxy post' do
-    allow_any_instance_of(QuickPay::Request).to receive(:request).with(:post, '/dummy', { :foo => 'bar' })
+    allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:post, '/dummy', { :foo => 'bar' })
     client.post("/dummy", { foo: 'bar'})
   end
 
   it 'should proxy patch' do
-    allow_any_instance_of(QuickPay::Request).to receive(:request).with(:patch, '/dummy', { :foo => 'bar' })
+    allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:patch, '/dummy', { :foo => 'bar' })
     client.patch("/dummy", { foo: 'bar'})
   end
 
   it 'should proxy delete' do
-    allow_any_instance_of(QuickPay::Request).to receive(:request).with(:delete, '/dummy')
+    allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:delete, '/dummy')
     client.delete("/dummy")
   end
   
