@@ -38,21 +38,21 @@ To initialise a client with QuickPay Api Key:
 
 ```
 require 'quickpay/api/client'
-client = QuickPay::API::Client.new(":#{ENV['QUICKPAY_API_KEY']")
+client = QuickPay::API::Client.new(api_key: ENV['QUICKPAY_API_KEY'])
 ```
 
 Or you can provide login credentials like:
 
 ```
 require 'quickpay/api/client'
-client = QuickPay::API::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
+client = QuickPay::API::Client.new(email: ENV['QUICKPAY_LOGIN'], password: ENV['QUICKPAY_PASSWORD'])
 ```
 
 To pass request specific headers:
 
 ```
-client = Quickpay::API::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']", 
-                 :headers => { 'QuickPay-Callback-URL' => 'https://webshop.com' }) 
+client = Quickpay::API::Client.new({ email: ENV['QUICKPAY_LOGIN'], password: ENV['QUICKPAY_PASSWORD'] }, 
+                                   :headers => { 'QuickPay-Callback-URL' => 'https://webshop.com' }) 
 ```
 
 
