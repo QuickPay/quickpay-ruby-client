@@ -1,15 +1,23 @@
 require 'spec_helper'
 
 describe QuickPay::API::Client do
-  let(:secret){ 'test:test' }
+  let(:secret){ { email: 'test', password: 'test' } }
   let(:client) { QuickPay::API::Client.new(secret) }
   
   it 'has credentials' do
-    expect(client.credential).to eq(secret)  
+    expect(client.options[:secret]).to eq('test:test')  
+  end
+
+  context 'with api_key' do
+    let!(:secret) { { api_key: 'secret'} }
+
+    it 'has credentials' do
+      expect(client.options[:secret]).to eq(':secret')  
+    end
   end
 
   it 'has not credentials' do
-    expect(QuickPay::API::Client.new.credential).to be_nil
+    expect(QuickPay::API::Client.new.options[:secret]).to be_nil
   end
   
   it 'should proxy get' do
