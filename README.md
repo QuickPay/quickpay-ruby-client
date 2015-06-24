@@ -23,35 +23,35 @@ It is currently tested with Ruby ( >= 2.1.x)
 
 Before doing anything you should register yourself with QuickPay and get access credentials. If you haven't please [click](https://quickpay.net/) here to apply.
 
-### Create a new client
+### Create a new API client
 
 First you should create a client instance that is anonymous or authorized with `api_key` or login credentials provided by QuickPay. 
 
 To initialise an anonymous client:
 
 ```
-require 'quickpay'
-client = QuickPay::Client.new
+require 'quickpay/api/client'
+client = QuickPay::API::Client.new
 ```
 
 To initialise a client with QuickPay Api Key:
 
 ```
-require 'quickpay'
-client = QuickPay::Client.new(":#{ENV['QUICKPAY_API_KEY']")
+require 'quickpay/api/client'
+client = QuickPay::API::Client.new(":#{ENV['QUICKPAY_API_KEY']")
 ```
 
 Or you can provide login credentials like:
 
 ```
-require 'quickpay'
-client = QuickPay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
+require 'quickpay/api/client'
+client = QuickPay::API::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']")
 ```
 
 To pass request specific headers:
 
 ```
-client = Quickpay::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']", 
+client = Quickpay::API::Client.new("#{ENV['QUICKPAY_LOGIN']}:#{ENV['QUICKPAY_PASSWORD']", 
                  :headers => { 'QuickPay-Callback-URL' => 'https://webshop.com' }) 
 ```
 
@@ -89,23 +89,23 @@ By default `(get|post|patch|put|delete)` will return JSON parsed body on success
 
 Response status |  Error    |
 ----------------| ----------|
-`400` | `QuickPay::BadRequest`
-`401` | `QuickPay::Unauthorized` 
-`402` | `QuickPay::PaymentRequired`
-`403` | `QuickPay::Forbidden`
-`404` | `QuickPay::NotFound`
-`405` | `QuickPay::MethodNotAllowed`
-`406` | `QuickPay::NotAcceptable`
-`409` | `QuickPay::Conflict`
-`500` | `QuickPay::ServerError`
+`400` | `QuickPay::API::BadRequest`
+`401` | `QuickPay::API::Unauthorized` 
+`402` | `QuickPay::API::PaymentRequired`
+`403` | `QuickPay::API::Forbidden`
+`404` | `QuickPay::API::NotFound`
+`405` | `QuickPay::API::MethodNotAllowed`
+`406` | `QuickPay::API::NotAcceptable`
+`409` | `QuickPay::API::Conflict`
+`500` | `QuickPay::API::ServerError`
 
-All exceptions inherits `QuickPay::Error`, so you can listen for any api error like:
+All exceptions inherits `QuickPay::API::Error`, so you can listen for any api error like:
 
 ```
 begin
   client.post("/payments", :currency => :DKK, :order_id => '1212')
   ... 
-rescue QuickPay::Error => e
+rescue QuickPay::API::Error => e
   puts e.body
 end
 ```
