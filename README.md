@@ -61,8 +61,8 @@ client = Quickpay::API::Client.new({ email: ENV['QUICKPAY_LOGIN'], password: ENV
 You can afterwards call any method described in QuickPay api with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch` and `delete`.
 
 ```
-client.get("/activities").each do |activity|
-  puts activity.id
+client.get("/activity").each do |activity|
+  puts activity["id"]
 end
 
 ```
@@ -70,11 +70,11 @@ end
 If you want raw http response, headers Please add `:raw => true` parameter:
 
 ```
-status, body, headers = client.get("/activities", :raw => true)
+status, body, headers = client.get("/activity", :raw => true)
 
 if status == 200
   JSON.parse(body).each do |activity|
-    puts activity.id
+    puts activity["id"]
   end
 else
   puts "Error: #{body}"
