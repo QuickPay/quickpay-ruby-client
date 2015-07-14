@@ -13,13 +13,14 @@ module QuickPay
         raw = data.delete(:raw)
         req_headers = headers.merge(data.delete(:headers) || {})
 
-        options = case method
-                  when :get, :delete
-                    { query: data }
-                  when :post, :patch, :put
-                    { body: data }
-                  end || {}
-        
+        case method
+        when :get, :delete
+          options = { query: data }
+        when :post, :patch, :put
+          options = { body: data.to_json }
+          req_headers["Content-Type"] = "application/json"
+        end || {}
+
         options = options.merge(:headers => headers.merge(req_headers))
         QuickPay.logger.debug { "#{method.to_s.upcase} #{base_uri}#{path} #{options}" }
         create_response(raw, self.class.send(method, path, options))

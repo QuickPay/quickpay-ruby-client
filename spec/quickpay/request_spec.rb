@@ -68,6 +68,15 @@ describe QuickPay::API::Request do
         expect(response['id']).to eq(100)
         expect_qp_request(:patch, "/dummy", { currency: 'DKK' })
       }
+
+      it "should send body as json" do
+        stub_json_request(:patch, '/dummy', 200, { :id => 100 })
+        handler.request(:patch, '/dummy', { currency: 'DKK' })
+
+        expect(WebMock).to have_requested(:patch, /dummy/).with { |request|
+          expect(JSON.parse(request.body)).to eq("currency" => "DKK")
+        }
+      end
     end
 
     context 'when method is delete' do
