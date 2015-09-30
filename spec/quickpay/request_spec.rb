@@ -47,6 +47,19 @@ describe QuickPay::API::Request do
       end
     end
 
+    it "should send extra options to httparty" do
+      request = QuickPay::API::Request.new(secret: ":secret", verify: false)
+
+      allow(QuickPay::API::Request).to receive(:get).and_call_original
+      stub_request(:any, //)
+
+      request.request(:get, "/ping")
+
+      expect(QuickPay::API::Request).to have_received(:get) do |_path, options|
+        expect(options[:verify]).to be false
+      end
+    end
+
     context 'when method is post/patch/put' do
       it {
         stub_json_request(:post, '/dummy', 200, { :id => 100 })
