@@ -1,14 +1,15 @@
+require 'httmultiparty'
 
 module QuickPay
   module API
     class Request
-      include HTTParty
+      include HTTMultiParty
 
       attr_reader :options, :secret
 
       def initialize (options = {})
         @options = options.dup
-        @secret  = options.delete(:secret)
+        @secret  = @options.delete(:secret)
         self.class.base_uri(options[:base_uri] || BASE_URI)
       end
 
@@ -17,12 +18,17 @@ module QuickPay
         req_headers = headers.merge(data.delete(:headers) || {})
 
         http_options = options.dup
-        case method
-        when :get, :delete
-          http_options[:query] = data
-        when :post, :patch, :put
-          http_options[:body] = data.to_json
-          req_headers["Content-Type"] = "application/json"
+        if data.any? { |_key, value| value.is_a?(File) }
+          http_options[:body] = data
+          http_options[:detect_mime_type] = true
+        else
+          case method
+          when :get, :delete
+            http_options[:query] = data
+          when :post, :patch, :put
+            http_options[:body] = data.to_json
+            req_headers["Content-Type"] = "application/json"
+          end
         end
 
         http_options[:headers] = headers.merge(req_headers)

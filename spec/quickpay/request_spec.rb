@@ -101,6 +101,19 @@ describe QuickPay::API::Request do
       }
     end
 
+    context "when data contains a file" do
+      it "should send a multipart request" do
+        request = QuickPay::API::Request.new(secret: "secret")
+
+        stub_request(:any, //)
+
+        request.request(:put, "/brandings/1/images/cancel.png", file: File.new(__FILE__))
+
+        expect(WebMock).to have_requested(:put, %r{/brandings/1/images/cancel\.png}).with { |request|
+          expect(request.headers["Content-Type"]).to match(/^multipart\/form-data/)
+        }
+      end
+    end
   end
 
   describe '.create_response' do
