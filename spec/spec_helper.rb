@@ -4,6 +4,7 @@ require 'bundler/setup'
 Bundler.setup(:default, :development)
 require 'quickpay/api/client'
 require 'webmock/rspec'
+require 'pry-byebug'
 
 QuickPay.logger.level = Logger::DEBUG
 Dir.glob("./spec/support/**/*.rb").each{|f| require f }

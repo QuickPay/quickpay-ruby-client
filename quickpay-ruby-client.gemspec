@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = QuickPay::VERSION
   spec.authors       = ["QuickPay Developers"]
   spec.email         = ["support@quickpay.net"]
-  
+
   spec.summary       = "Ruby client for QuickPay API"
   spec.description   = "Embed QuickPay's secure payments directly into your Ruby applications. more at https://tech.quickpay.net"
   spec.homepage      = "https://github.com/QuickPay/quickpay-ruby-client"
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-mocks"
   spec.add_development_dependency "webmock"
-  
-  spec.add_dependency "httparty", "~> 0.13"
-    
+  spec.add_development_dependency "pry-byebug"
+
+  spec.add_dependency "httmultiparty", "~> 0.3.16"
 end

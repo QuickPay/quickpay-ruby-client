@@ -1,5 +1,4 @@
 require 'json'
-require 'httparty'
 require 'quickpay/version'
 require 'quickpay/logger'
 require 'quickpay/constants'
