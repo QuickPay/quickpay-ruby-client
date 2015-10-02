@@ -4,8 +4,11 @@ module QuickPay
     class Request
       include HTTParty
 
+      attr_reader :options, :secret
+
       def initialize (options = {})
-        @secret = options[:secret]
+        @options = options.dup
+        @secret  = options.delete(:secret)
         self.class.base_uri(options[:base_uri] || BASE_URI)
       end
 
@@ -13,19 +16,18 @@ module QuickPay
         raw = data.delete(:raw)
         req_headers = headers.merge(data.delete(:headers) || {})
 
+        http_options = options.dup
         case method
         when :get, :delete
-          options = { query: data }
+          http_options[:query] = data
         when :post, :patch, :put
-          options = { body: data.to_json }
+          http_options[:body] = data.to_json
           req_headers["Content-Type"] = "application/json"
-        else
-          options = {}
         end
 
-        options = options.merge(:headers => headers.merge(req_headers))
-        QuickPay.logger.debug { "#{method.to_s.upcase} #{base_uri}#{path} #{options}" }
-        create_response(raw, self.class.send(method, path, options))
+        http_options[:headers] = headers.merge(req_headers)
+        QuickPay.logger.debug { "#{method.to_s.upcase} #{base_uri}#{path} #{http_options}" }
+        create_response(raw, self.class.send(method, path, http_options))
       end
 
       def create_response raw, res
@@ -69,7 +71,7 @@ module QuickPay
           'User-Agent'     => user_agent,
           'Accept-Version' => "v#{QuickPay::API_VERSION}"
         }
-        heads['Authorization'] = "Basic #{authorization}" if @secret != nil
+        heads['Authorization'] = "Basic #{authorization}" if secret != nil
         heads
       end
 
@@ -83,7 +85,7 @@ module QuickPay
       end
 
       def authorization
-        Base64.strict_encode64(@secret)
+        Base64.strict_encode64(secret)
       end
     end
   end
