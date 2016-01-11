@@ -111,3 +111,19 @@ end
 ```
 
 You can read more about api responses at [http://tech.quickpay.net/api/](http://tech.quickpay.net/api).
+
+## Contributions
+
+To contribute:
+
+1) Write a spec that fails
+2) Fix spec by adding/changing code
+3) Add feature or bugfix to changelog in the "Unreleased" section
+4) Submit a pull request
+5) World is now a better place! :)
+
+### Running the specs
+
+```
+bundle exec rspec
+```
