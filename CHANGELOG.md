@@ -5,6 +5,8 @@
 
 ### Features:
 
+ - Can now HEAD
+
 (your contribution here)
 
 ### Bugfixes
