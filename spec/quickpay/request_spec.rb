@@ -38,6 +38,16 @@ describe QuickPay::API::Request do
       }
     end
 
+    context 'when method is head' do
+      it {
+        stub_request(:head, /dummy/)
+        status, body, headers = handler.request(:head, '/dummy', raw: true)
+
+        expect(status).to eq(200)
+        expect(body).to be_nil
+      }
+    end
+
     context 'headers' do
       it 'should include extra headers in request' do
         extra_headers = { 'callback-url' => 'http://test.me/thanks' }
