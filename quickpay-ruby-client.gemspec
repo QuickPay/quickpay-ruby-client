@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-mocks"
-  spec.add_development_dependency "webmock"
+  spec.add_development_dependency "webmock", "~> 1.24"
   spec.add_development_dependency "pry-byebug"
 
   spec.add_dependency "httmultiparty", "~> 0.3.16"
