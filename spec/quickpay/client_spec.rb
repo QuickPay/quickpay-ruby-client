@@ -25,6 +25,11 @@ describe QuickPay::API::Client do
     client.get("/dummy")
   end
 
+  it 'should proxy head' do
+    allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:head, '/dummy')
+    client.head("/dummy")
+  end
+
   it 'should proxy post' do
     allow_any_instance_of(QuickPay::API::Request).to receive(:request).with(:post, '/dummy', { :foo => 'bar' })
     client.post("/dummy", { foo: 'bar'})
@@ -41,4 +46,3 @@ describe QuickPay::API::Client do
   end
   
 end
-  
