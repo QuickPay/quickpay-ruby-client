@@ -26,7 +26,7 @@ module QuickPay
         end
       end
 
-      [:get, :post, :patch, :put, :delete].each do |method|
+      [:get, :post, :patch, :put, :delete, :head].each do |method|
         define_method(method) do |*args|
           Request.new(options).request(method, *args)
         end

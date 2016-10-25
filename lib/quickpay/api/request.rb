@@ -23,7 +23,7 @@ module QuickPay
           http_options[:detect_mime_type] = true
         else
           case method
-          when :get, :delete
+          when :get, :delete, :head
             http_options[:query] = data
           when :post, :patch, :put
             http_options[:body] = data.to_json
