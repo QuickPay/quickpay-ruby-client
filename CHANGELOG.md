@@ -5,7 +5,7 @@
 
 ### Features:
 
- - Can now HEAD
+ - Can now HEAD (https://github.com/QuickPay/quickpay-ruby-client/pull/21)
 
 (your contribution here)
 
