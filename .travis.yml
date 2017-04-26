@@ -1,6 +1,9 @@
 language: ruby
 rvm:
   - 2.1.2
+  - 2.2.7
+  - 2.3.3
+  - 2.4.1
 cache: bundler
 script: bundle exec rspec --format documentation --color
 notifications:
