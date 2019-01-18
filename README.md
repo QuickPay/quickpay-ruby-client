@@ -50,11 +50,10 @@ require 'quickpay/api/client'
 client = QuickPay::API::Client.new(username: ENV['QUICKPAY_LOGIN'], password: ENV['QUICKPAY_PASSWORD'])
 ```
 
-You can also set some connection specific options:
+You can also set some connection specific options (default values shown):
 
 ```
 client = Quickpay::API::Client.new(
-  password: ENV['QUICKPAY_PASSWORD'],
   read_timeout: 60,
   write_timeout: 60,
   connect_timeout: 60,
@@ -64,27 +63,29 @@ client = Quickpay::API::Client.new(
 
 ### Sending request
 
-You can afterwards call any method described in QuickPay API with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch`, `delete` and `head`. Beyond the endpoint, the client accepts the following options...
-
-  * `body: ""`
-  * `headers: {}`
-  * `query: {}`
-  * `raw: true|false`
-
-```
-status, body, headers = client.post(
-  "/payments/1/capture",
-  body: { amount: 100 }.to_json,
-  headers: { "Content-Type" => "application/json" },
-  query: { "synchronized" => "" }
-  raw: true
-)
-
+You can afterwards call any method described in QuickPay API with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch`, `delete` and `head`.
 
 ```
 client.get("/activity").each do |activity|
   puts activity["id"]
 end
+```
+
+Beyond the endpoint, the client accepts the following options (default values shown):
+
+  * `body: ""`
+  * `headers: {}`
+  * `query: {}`
+  * `raw: false`
+
+```
+response = client.post(
+  "/payments/1/capture",
+  body: { amount: 100 }.to_json,
+  headers: { "Content-Type" => "application/json" },
+  query: { "synchronized" => "" }
+  raw: false
+)
 
 ```
 
@@ -98,7 +99,7 @@ if status == 200
     puts activity["id"]
   end
 else
-  puts "Error: #{body}"
+  # do something else
 end
 
 ```
