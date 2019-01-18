@@ -1,15 +1,14 @@
 require "excon"
 require "json"
 require "quickpay/api/error"
+require "quickpay/api/version"
 
 module QuickPay
   module API
     class Client
-      APP_VERSION = "2.0.0".freeze
-      API_VERSION = "v10".freeze
       DEFAULT_HEADERS = {
-        "User-Agent"     => "quickpay-ruby-client, v#{APP_VERSION}",
-        "Accept-Version" => API_VERSION
+        "User-Agent"     => "quickpay-ruby-client, v#{QuickPay::API::VERSION}",
+        "Accept-Version" => "v10"
       }.freeze
 
       def initialize(username: nil, password: nil, base_uri: "https://api.quickpay.net", options: {})
