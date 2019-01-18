@@ -1,16 +1,16 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'quickpay/version'
+require "quickpay/api/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "quickpay-ruby-client"
-  spec.version       = QuickPay::VERSION
+  spec.version       = QuickPay::API::VERSION
   spec.authors       = ["QuickPay Developers"]
   spec.email         = ["support@quickpay.net"]
 
   spec.summary       = "Ruby client for QuickPay API"
-  spec.description   = "Embed QuickPay's secure payments directly into your Ruby applications. more at https://tech.quickpay.net"
+  spec.description   = "Embed QuickPay's secure payments directly into your Ruby applications. Learn more at https://tech.quickpay.net"
   spec.homepage      = "https://github.com/QuickPay/quickpay-ruby-client"
   spec.license       = "MIT"
 
@@ -19,11 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.2"
-  spec.add_development_dependency "rspec-mocks"
-  spec.add_development_dependency "webmock", "~> 1.24"
-  spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "rake", "~> 12.3.2"
+  spec.add_development_dependency "minitest", "~> 5.11.3"
 
-  spec.add_dependency "httmultiparty", "~> 0.3.16"
+  spec.add_dependency "excon", "~> 0.62.0"
 end

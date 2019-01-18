@@ -1,34 +1,58 @@
-require 'quickpay'
-require 'quickpay/api/request'
-require 'quickpay/api/errors'
+require "excon"
+require "json"
+require "quickpay/api/error"
+require "quickpay/api/version"
 
 module QuickPay
-  class << self
-    attr_accessor :base_uri
-  end
-
   module API
     class Client
-      attr_accessor :options
-      
-      def initialize(auth_params = {}, opts = {})
-        opts[:secret]   ||= extract_auth(auth_params)
-        opts[:base_uri] ||= (QuickPay.base_uri || QuickPay::BASE_URI)
+      DEFAULT_HEADERS = {
+        "User-Agent"     => "quickpay-ruby-client, v#{QuickPay::API::VERSION}",
+        "Accept-Version" => "v10"
+      }.freeze
 
-        @options = opts.dup
-      end
-      
-      def extract_auth params
-        if params[:email] and params[:password]  
-          "#{params[:email]}:#{params[:password]}"
-        elsif params[:api_key]
-          ":#{params[:api_key]}"
-        end
+      def initialize(username: nil, password: nil, base_uri: "https://api.quickpay.net", options: {})
+        opts = {
+          read_timeout: options.fetch(:read_timeout, 60),
+          write_timeout: options.fetch(:write_timeout, 60),
+          connect_timeout: options.fetch(:connect_timeout, 60),
+        }
+
+        opts[:username] = Excon::Utils.escape_uri(username) if username
+        opts[:password] = Excon::Utils.escape_uri(password) if password
+
+        @connection = Excon.new(base_uri, opts)
       end
 
       [:get, :post, :patch, :put, :delete, :head].each do |method|
-        define_method(method) do |*args|
-          Request.new(options).request(method, *args)
+        define_method(method) do |path, options = {}|
+          headers = DEFAULT_HEADERS.merge(options.fetch(:headers, {}))
+          body    = begin
+            data = options.fetch(:body, "")
+            if headers["Content-Type"] == "application/json" && data.instance_of?(Hash)
+              data.to_json 
+            else
+              data
+            end
+          end
+
+          res = @connection.__send__(
+            method,
+            path: path,
+            body: body,
+            headers: headers,
+            query: options.fetch(:query, {})
+          )
+
+          if options.fetch(:raw, false)
+            [res.status, res.body, res.headers]
+          else
+            if res.status >= 400
+              raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers)
+            end
+
+            res.headers["Content-Type"] == "application/json" ? JSON.parse(res.body) : res.body
+          end
         end
       end
     end
