@@ -1,57 +1,9 @@
 require "excon"
 require "json"
+require "quickpay/api/error"
 
 module QuickPay
   module API
-    class Error < StandardError
-      class BadRequest < Error; end
-      class Unauthorized < Error; end
-      class PaymentRequired < Error; end
-      class Forbidden < Error; end
-      class NotFound < Error; end
-      class MethodNotAllowed < Error; end
-      class NotAcceptable < Error; end
-      class Conflict < Error; end
-      class TooManyRequest < Error; end
-      class InternalServerError < Error; end
-      class BadGateway < Error; end
-      class ServiceUnavailable < Error; end
-      class GatewayTimeout < Error; end
-
-      CLASS_MAP = {
-        400 => "BadRequest",
-        401 => "Unauthorized",
-        402 => "PaymentRequired",
-        403 => "Forbidden",
-        404 => "NotFound",
-        405 => "MethodNotAllowed",
-        406 => "NotAcceptable",
-        409 => "Conflict",
-        429 => "TooManyRequest",
-        500 => "InternalServerError",
-        502 => "BadGateway",
-        503 => "ServiceUnavailable",
-        504 => "GatewayTimeout"
-      }.freeze
-
-      attr_reader :status, :body, :headers
-
-      def initialize(status, body, headers)
-        @status  = status
-        @body    = body
-        @headers = headers
-      end
-
-      def self.by_status_code(status, body, headers)
-        if CLASS_MAP[status]
-          klass = QuickPay::API::Error.const_get(CLASS_MAP[status])
-          fail klass.new(status, body, headers)
-        else
-          fail QuickPay::API::Error.new(status, body, headers)
-        end
-      end
-    end
-
     class Client
       APP_VERSION = "2.0.0".freeze
       API_VERSION = "v10".freeze
