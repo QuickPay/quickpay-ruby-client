@@ -6,7 +6,7 @@ rvm:
   - 2.4.4
   - 2.5.1
 cache: bundler
-script: bundle exec rspec --format documentation --color
+script: bundle exec ruby test/client.rb
 notifications:
   slack:
     secure: SixeTgiVsOaeWyKwICxLJ0GLN/C9j6qW1ZdaEytIDuZaBAn9oArrRGkJiehFdlzcPUHwzMWC0vl9GQzyBhZ7dbq+B53QY1mH9LTb9A53Y2d1OO1kBjJAkC5Yprvpjm52+x889Dwlz0bfLETvLsC2ej0NZDvSSLKFjpZZIZMOWkg=

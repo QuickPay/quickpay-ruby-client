@@ -1,7 +1,5 @@
-
 module QuickPay
   module API
-    class NotFound < Error
-    end
+    VERSION = "2.0.0".freeze
   end
 end
