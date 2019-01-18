@@ -36,22 +36,22 @@ First you should create a client instance that is anonymous or authorized with y
 To initialise an anonymous client:
 
 ```ruby
-require 'quickpay/api/client'
+require "quickpay/api/client"
 client = QuickPay::API::Client.new
 ```
 
 To initialise a client with QuickPay API Key:
 
 ```ruby
-require 'quickpay/api/client'
-client = QuickPay::API::Client.new(password: ENV['QUICKPAY_API_KEY'])
+require "quickpay/api/client"
+client = QuickPay::API::Client.new(password: ENV["QUICKPAY_API_KEY"])
 ```
 
 Or you can provide login credentials like:
 
 ```ruby
-require 'quickpay/api/client'
-client = QuickPay::API::Client.new(username: ENV['QUICKPAY_LOGIN'], password: ENV['QUICKPAY_PASSWORD'])
+require "quickpay/api/client"
+client = QuickPay::API::Client.new(username: ENV["QUICKPAY_LOGIN"], password: ENV["QUICKPAY_PASSWORD"])
 ```
 
 You can also set some connection specific options (default values shown):
@@ -132,7 +132,7 @@ All exceptions inherits `QuickPay::API::Error`, so you can listen for any api er
 
 ```ruby
 begin
-  client.post("/payments", body: {:currency => :DKK, :order_id => '1212' })
+  client.post("/payments", body: { currency: "DKK", order_id: "1212" })
 rescue QuickPay::API::Error => e
   puts e.body
 end
