@@ -76,7 +76,8 @@ module QuickPay
       [:get, :post, :patch, :put, :delete, :head].each do |method|
         define_method(method) do |path, options = {}|
           headers = DEFAULT_HEADERS.merge(options.fetch(:headers, {}))
-          body    = options.fetch(:body, "").yield_self do |data|
+          body    = begin
+            data = options.fetch(:body, "")
             if headers["Content-Type"] == "application/json" && data.instance_of?(Hash)
               data.to_json 
             else
