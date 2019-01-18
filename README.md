@@ -9,12 +9,16 @@ This gem currently support QuickPay `v10` api.
 ## Installation
 
 Add to your Gemfile
-  
-    $ gem 'quickpay-ruby-client'
+
+```ruby
+gem "quickpay-ruby-client"
+```
 
 or install from Rubygems:
-  
-    $ gem install quickpay-ruby-client
+
+```
+$ gem install quickpay-ruby-client
+```
   
 It is currently tested with Ruby ( >= 2.1.x)
 
@@ -31,28 +35,28 @@ First you should create a client instance that is anonymous or authorized with y
 
 To initialise an anonymous client:
 
-```
+```ruby
 require 'quickpay/api/client'
 client = QuickPay::API::Client.new
 ```
 
 To initialise a client with QuickPay API Key:
 
-```
+```ruby
 require 'quickpay/api/client'
 client = QuickPay::API::Client.new(password: ENV['QUICKPAY_API_KEY'])
 ```
 
 Or you can provide login credentials like:
 
-```
+```ruby
 require 'quickpay/api/client'
 client = QuickPay::API::Client.new(username: ENV['QUICKPAY_LOGIN'], password: ENV['QUICKPAY_PASSWORD'])
 ```
 
 You can also set some connection specific options (default values shown):
 
-```
+```ruby
 client = Quickpay::API::Client.new(
   read_timeout: 60,
   write_timeout: 60,
@@ -65,7 +69,7 @@ client = Quickpay::API::Client.new(
 
 You can afterwards call any method described in QuickPay API with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch`, `delete` and `head`.
 
-```
+```ruby
 client.get("/activity").each do |activity|
   puts activity["id"]
 end
@@ -78,7 +82,7 @@ Beyond the endpoint, the client accepts the following options (default values sh
   * `query: {}`
   * `raw: false`
 
-```
+```ruby
 response = client.post(
   "/payments/1/capture",
   body: { amount: 100 }.to_json,
@@ -91,7 +95,7 @@ response = client.post(
 
 If you want raw http response, headers Please add `:raw => true` parameter:
 
-```
+```ruby
 status, body, headers = client.get("/activity", raw: true)
 
 if status == 200
@@ -126,10 +130,9 @@ Response status |  Error    |
 
 All exceptions inherits `QuickPay::API::Error`, so you can listen for any api error like:
 
-```
+```ruby
 begin
   client.post("/payments", body: {:currency => :DKK, :order_id => '1212' })
-  ... 
 rescue QuickPay::API::Error => e
   puts e.body
 end
@@ -150,5 +153,5 @@ To contribute:
 ### Running the specs
 
 ```
-bundle exec rspec
+$ bundle exec ruby test/client.rb
 ```
