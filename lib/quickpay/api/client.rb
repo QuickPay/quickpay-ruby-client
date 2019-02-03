@@ -7,7 +7,7 @@ module QuickPay
   module API
     class Client
       DEFAULT_HEADERS = {
-        "User-Agent"     => "quickpay-ruby-client, v#{QuickPay::API::VERSION}",
+        "User-Agent" => "quickpay-ruby-client, v#{QuickPay::API::VERSION}",
         "Accept-Version" => "v10"
       }.freeze
 
@@ -15,7 +15,7 @@ module QuickPay
         opts = {
           read_timeout: options.fetch(:read_timeout, 60),
           write_timeout: options.fetch(:write_timeout, 60),
-          connect_timeout: options.fetch(:connect_timeout, 60),
+          connect_timeout: options.fetch(:connect_timeout, 60)
         }
 
         opts[:username] = Excon::Utils.escape_uri(username) if username
@@ -24,13 +24,13 @@ module QuickPay
         @connection = Excon.new(base_uri, opts)
       end
 
-      [:get, :post, :patch, :put, :delete, :head].each do |method|
+      %i[get post patch put delete head].each do |method|
         define_method(method) do |path, options = {}|
           headers = DEFAULT_HEADERS.merge(options.fetch(:headers, {}))
           body    = begin
             data = options.fetch(:body, "")
             if headers["Content-Type"] == "application/json" && data.instance_of?(Hash)
-              data.to_json 
+              data.to_json
             else
               data
             end
@@ -47,9 +47,7 @@ module QuickPay
           if options.fetch(:raw, false)
             [res.status, res.body, res.headers]
           else
-            if res.status >= 400
-              raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers)
-            end
+            raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers) if res.status >= 400
 
             res.headers["Content-Type"] == "application/json" ? JSON.parse(res.body) : res.body
           end
