@@ -1,12 +1,11 @@
 language: ruby
 rvm:
-  - 2.1.10
-  - 2.2.10
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.3
+  - 2.4
+  - 2.5
+  - 2.6
 cache: bundler
-script: bundle exec ruby test/client.rb
+script: bundle exec rake
 notifications:
   slack:
     secure: SixeTgiVsOaeWyKwICxLJ0GLN/C9j6qW1ZdaEytIDuZaBAn9oArrRGkJiehFdlzcPUHwzMWC0vl9GQzyBhZ7dbq+B53QY1mH9LTb9A53Y2d1OO1kBjJAkC5Yprvpjm52+x889Dwlz0bfLETvLsC2ej0NZDvSSLKFjpZZIZMOWkg=
