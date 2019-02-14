@@ -36,8 +36,8 @@ module QuickPay
             end
           end
 
-          res = @connection.__send__(
-            method,
+          res = @connection.request(
+            method: method,
             path: path,
             body: body,
             headers: headers,
