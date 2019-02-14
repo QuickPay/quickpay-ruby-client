@@ -5,9 +5,12 @@ require "quickpay/api/client"
 
 Excon.defaults[:mock] = true
 
+# Excon expects two hashes
+# rubocop:disable Style/BracesAroundHashParameters
+
 describe QuickPay::API::Client do
   before do
-    Excon.stub({}, { body: "Uknown Stub", status: 500})
+    Excon.stub({}, { body: "Uknown Stub", status: 500 })
   end
 
   after do
@@ -15,7 +18,16 @@ describe QuickPay::API::Client do
   end
 
   it "set default headers" do
-    Excon.stub({ path: "/ping" }, lambda { |request_params| { headers: request_params[:headers], :status => 200 } })
+    Excon.stub(
+      { path: "/ping" },
+      lambda do |request_params|
+        {
+          headers: request_params[:headers],
+          status: 200
+        }
+      end
+    )
+
     client = QuickPay::API::Client.new
     _, _, headers = *client.get("/ping", raw: true)
 
@@ -24,7 +36,16 @@ describe QuickPay::API::Client do
   end
 
   it "handles authentication" do
-    Excon.stub({ path: "/ping" }, lambda { |request_params| { headers: request_params[:headers], :status => 200 } })
+    Excon.stub(
+      { path: "/ping" },
+      lambda do |request_params|
+        {
+          headers: request_params[:headers],
+          status: 200
+        }
+      end
+    )
+
     client = QuickPay::API::Client.new(password: "secret")
     _, _, headers = *client.get("/ping", raw: true)
 
@@ -34,7 +55,17 @@ describe QuickPay::API::Client do
   it "handles convenient JSON <=> Hash conversion of body" do
     client = QuickPay::API::Client.new
 
-    Excon.stub({ path: "/ping" }, lambda { |request_params| { body: request_params[:body], :status => 200 } })
+    Excon.stub(
+      { path: "/ping" },
+      lambda do |request_params|
+        {
+          body: request_params[:body],
+          status: 200
+        }
+      end
+    )
+
+    # client return JSON string
     client.post(
       "/ping",
       body: { "foo" => "bar" },
@@ -43,13 +74,18 @@ describe QuickPay::API::Client do
       JSON.parse(response).must_equal({ "foo" => "bar" })
     end
 
-    Excon.stub({ path: "/ping" },
-      lambda { |request_params| { 
-        body: request_params[:body],
-        headers: { "Content-Type" => "application/json" },
-        :status => 200 }
-      }
+    Excon.stub(
+      { path: "/ping" },
+      lambda do |request_params|
+        {
+          body: request_params[:body],
+          headers: { "Content-Type" => "application/json" },
+          status: 200
+        }
+      end
     )
+
+    # client returns Ruby Hash
     client.post(
       "/ping",
       body: { "foo" => "bar" },
@@ -133,3 +169,4 @@ describe QuickPay::API::Client do
     end
   end
 end
+# rubocop:enable Style/BracesAroundHashParameters

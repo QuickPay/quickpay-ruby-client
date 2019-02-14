@@ -40,12 +40,10 @@ module QuickPay
       end
 
       def self.by_status_code(status, body, headers)
-        if CLASS_MAP[status]
-          klass = QuickPay::API::Error.const_get(CLASS_MAP[status])
-          fail klass.new(status, body, headers)
-        else
-          fail QuickPay::API::Error.new(status, body, headers)
-        end
+        raise QuickPay::API::Error.new(status, body, headers) unless CLASS_MAP[status]
+
+        klass = QuickPay::API::Error.const_get(CLASS_MAP[status])
+        raise klass.new(status, body, headers)
       end
     end
   end
