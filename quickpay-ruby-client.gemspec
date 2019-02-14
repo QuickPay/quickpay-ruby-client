@@ -21,6 +21,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest", "~> 5.11.3"
   spec.add_development_dependency "rake", "~> 12.3.2"
   spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "simplecov", "~> 0.16.1"
+  spec.add_development_dependency "simplecov-console", "~> 0.4.2"
 
   spec.add_dependency "excon", "~> 0.62.0"
 end

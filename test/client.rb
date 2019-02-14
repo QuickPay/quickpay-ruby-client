@@ -1,3 +1,14 @@
+# Simplecov must be loaded and configured before anything else
+require "simplecov"
+require "simplecov-console"
+SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
+  [SimpleCov::Formatter::Console]
+)
+SimpleCov.start do
+  add_filter "/vendor/"
+  minimum_coverage 100
+end
+
 require "excon"
 require "json"
 require "minitest/autorun"
