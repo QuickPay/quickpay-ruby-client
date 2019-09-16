@@ -87,7 +87,7 @@ response = client.post(
   "/payments/1/capture",
   body: { amount: 100 }.to_json,
   headers: { "Content-Type" => "application/json" },
-  query: { "synchronized" => "" }
+  query: { "synchronized" => "" },
   raw: false
 )
 
