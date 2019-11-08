@@ -187,7 +187,7 @@ describe QuickPay::API::Client do
       Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
       client.get("/ping")
     end
-    e.inspect.must_equal %Q(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
+    e.inspect.must_equal %(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
   end
 end
 # rubocop:enable Style/BracesAroundHashParameters
