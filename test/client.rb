@@ -43,7 +43,7 @@ describe QuickPay::API::Client do
     _, _, headers = *client.get("/ping", raw: true)
 
     headers["Accept-Version"].must_equal "v10"
-    headers["User-Agent"].must_equal "quickpay-ruby-client, v2.0.0"
+    headers["User-Agent"].must_equal "quickpay-ruby-client, v2.0.1"
   end
 
   it "handles authentication" do
