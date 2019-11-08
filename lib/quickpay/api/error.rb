@@ -39,6 +39,11 @@ module QuickPay
         @headers = headers
       end
 
+      def to_s
+        "#<#{self.class}: status=#{status}, body=#{body.inspect}, headers=#{headers.inspect}>"
+      end
+      alias_method :inspect, :to_s
+
       def self.by_status_code(status, body, headers)
         raise QuickPay::API::Error.new(status, body, headers) unless CLASS_MAP[status]
 

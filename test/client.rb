@@ -179,5 +179,15 @@ describe QuickPay::API::Client do
       client.get("/ping")
     end
   end
+
+  it "decorates predefined errors" do
+    client = QuickPay::API::Client.new
+
+    e = assert_raises QuickPay::API::Error do
+      Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
+      client.get("/ping")
+    end
+    e.inspect.must_equal %Q(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
+  end
 end
 # rubocop:enable Style/BracesAroundHashParameters
