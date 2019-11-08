@@ -88,5 +88,5 @@ Metrics/ParameterLists:
 FrozenStringLiteralComment:
   Enabled: false
 
-Style/UnneededCondition: # Double pipes(||) on multiline is not so clear.
+Style/RedundantCondition: # Double pipes(||) on multiline is not so clear.
   Enabled: false
