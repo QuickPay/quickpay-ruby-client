@@ -36,18 +36,27 @@ module QuickPay
             end
           end
 
-          res = @connection.request(
+          req = {
             method: method,
             path: path,
             body: body,
             headers: headers,
             query: options.fetch(:query, {})
-          )
+          }
+
+          res = @connection.request(req)
 
           if options.fetch(:raw, false)
             [res.status, res.body, res.headers]
           else
-            raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers) if res.status >= 400
+            if res.status >= 400
+              raise QuickPay::API::Error.by_status_code(
+                req,
+                status: res.status,
+                headers: res.headers,
+                body: res.body
+              )
+            end
 
             res.headers["Content-Type"] == "application/json" ? JSON.parse(res.body) : res.body
           end

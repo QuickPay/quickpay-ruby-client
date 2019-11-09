@@ -187,7 +187,12 @@ describe QuickPay::API::Client do
       Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
       client.get("/ping")
     end
-    e.inspect.must_equal %(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
+
+    s = %(#<QuickPay::API::Error::Conflict: request={:method=>:get, :path=>"/ping", :body=>"", ) +
+        %(:headers=>{"User-Agent"=>"quickpay-ruby-client, v2.0.1", "Accept-Version"=>"v10"}, :query=>{}}, ) +
+        %(response={:status=>409, :headers=>{"Foo"=>"bar"}, :body=>"Conflict"}>)
+
+    e.inspect.must_equal s
   end
 end
 # rubocop:enable Style/BracesAroundHashParameters
