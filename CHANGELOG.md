@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## master
+
+## v2.0.1
+
+* More verbose `#to_s`/`#inspect` on errors
 
 ## v2.0.0
 
