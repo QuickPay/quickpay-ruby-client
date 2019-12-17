@@ -2,6 +2,10 @@
 
 ## master
 
+## v2.0.2
+
+* Update excon dependency for CVE-2019-16779 (prognostikos)
+
 ## v2.0.1
 
 * More verbose `#to_s`/`#inspect` on errors
