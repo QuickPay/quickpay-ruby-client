@@ -22,8 +22,6 @@ module QuickPay
         opts[:username] = Excon::Utils.escape_uri(username) if username
         opts[:password] = Excon::Utils.escape_uri(password) if password
 
-puts opts.inspect
-
         @connection = Excon.new(base_uri, opts)
       end
 
