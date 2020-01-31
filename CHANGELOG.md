@@ -2,6 +2,10 @@
 
 ## master
 
+## v2.0.3
+
+* Add the possibility of settins options for JSON parser
+
 ## v2.0.2
 
 * Update excon dependency for CVE-2019-16779 (prognostikos)
