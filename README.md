@@ -58,9 +58,11 @@ You can also set some connection specific options (default values shown):
 
 ```ruby
 client = Quickpay::API::Client.new(
-  read_timeout: 60,
-  write_timeout: 60,
-  connect_timeout: 60,
+  options: {
+    read_timeout: 60,
+    write_timeout: 60,
+    connect_timeout: 60
+  }
 ) 
 ```
 
