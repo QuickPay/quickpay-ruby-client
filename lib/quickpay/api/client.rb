@@ -15,7 +15,8 @@ module QuickPay
         opts = {
           read_timeout: options.fetch(:read_timeout, 60),
           write_timeout: options.fetch(:write_timeout, 60),
-          connect_timeout: options.fetch(:connect_timeout, 60)
+          connect_timeout: options.fetch(:connect_timeout, 60),
+          json_opts: options.fetch(:json_opts, nil)
         }
 
         opts[:username] = Excon::Utils.escape_uri(username) if username
@@ -49,7 +50,11 @@ module QuickPay
           else
             raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers) if res.status >= 400
 
-            res.headers["Content-Type"] == "application/json" ? JSON.parse(res.body) : res.body
+            if res.headers["Content-Type"] == "application/json"
+              JSON.parse(res.body, options.dig(:json_opts) || @connection.data.dig(:json_opts))
+            else
+              res.body
+            end
           end
         end
       end

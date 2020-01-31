@@ -104,6 +104,29 @@ describe QuickPay::API::Client do
     ).tap do |response|
       response.must_equal({ "foo" => "bar" })
     end
+
+    # client returns symbolized Ruby Hash
+    client.post(
+      "/ping",
+      body: { "foo" => "bar" },
+      headers: { "Content-Type" => "application/json" },
+      json_opts: { symbolize_names: true }
+    ).tap do |response|
+      response.must_equal({ :foo => "bar" })
+    end
+
+    client = QuickPay::API::Client.new(
+      password: "secret",
+      options: { json_opts: { symbolize_names: true } }
+    )
+
+    client.post(
+      "/ping",
+      body: { "foo" => "bar" },
+      headers: { "Content-Type" => "application/json" }
+    ).tap do |response|
+      response.must_equal({ :foo => "bar" })
+    end
   end
 
   it "raises predefined errors" do
