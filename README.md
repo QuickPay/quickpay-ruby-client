@@ -57,7 +57,7 @@ client = QuickPay::API::Client.new(username: ENV["QUICKPAY_LOGIN"], password: EN
 You can also set some connection specific options (default values shown):
 
 ```ruby
-client = Quickpay::API::Client.new(
+client = QuickPay::API::Client.new(
   options: {
     read_timeout: 60,
     write_timeout: 60,
