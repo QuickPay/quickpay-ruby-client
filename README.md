@@ -20,7 +20,7 @@ or install from Rubygems:
 $ gem install quickpay-ruby-client
 ```
   
-It is currently tested with Ruby ( >= 2.1.x)
+It is currently tested with Ruby ( >= 2.5.x)
 
 * MRI
 * Rubinius (2.0)
@@ -142,6 +142,17 @@ rescue QuickPay::API::Error => e
 end
 ```
 
+Alternatively you can add an error handeling callback to either method.
+
+If a non 2xx or 3xx response is received this callback is called with status, body and headers of the response.
+Aditionally the error that *would* have been thrown is also given to the block.
+
+```ruby
+client.post("/payments", body: { currency: "DKK", order_id: "1212" }) do |status, body, headers, api_error|
+  puts body
+end
+```
+
 You can read more about QuickPay API responses at [https://learn.quickpay.net/tech-talk/api](https://learn.quickpay.net/tech-talk/api).
 
 ## Contributions
@@ -157,5 +168,5 @@ To contribute:
 ### Running the specs
 
 ```
-$ bundle exec ruby test/client.rb
+$ bundle exec rake test
 ```
