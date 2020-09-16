@@ -17,7 +17,6 @@ require "quickpay/api/client"
 Excon.defaults[:mock] = true
 
 # Excon expects two hashes
-# rubocop:disable Style/BracesAroundHashParameters
 
 describe QuickPay::API::Client do
   before do
@@ -203,6 +202,41 @@ describe QuickPay::API::Client do
     end
   end
 
+  describe "error callbacks" do
+    subject { QuickPay::API::Client.new }
+
+    it "is not called if status is 2xx or 3xx" do
+      Excon.stub({ path: "/ping" }, {
+                   status: 201
+                 })
+
+      called = false
+      subject.get "/ping" do |_, _, _, _|
+        called = true
+      end
+
+      _(called).must_equal false
+    end
+
+    it "is called if status is not 2xx or 3xx" do
+      Excon.stub({ path: "/ping" }, {
+                   status: 404,
+                   body: "Not found",
+                   headers: { "test" => "not found test" }
+                 })
+
+      called = false
+      subject.get "/ping" do |status, body, headers, error|
+        called = true
+        _(status).must_equal 404
+        _(body).must_equal "Not found"
+        _(headers["test"]).must_equal "not found test"
+        _(error.class).must_equal QuickPay::API::Error::NotFound
+      end
+      _(called).must_equal true
+    end
+  end
+
   it "decorates predefined errors" do
     client = QuickPay::API::Client.new
 
@@ -213,4 +247,3 @@ describe QuickPay::API::Client do
     e.inspect.must_equal %(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
   end
 end
-# rubocop:enable Style/BracesAroundHashParameters

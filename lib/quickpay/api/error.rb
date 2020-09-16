@@ -45,10 +45,10 @@ module QuickPay
       alias_method :inspect, :to_s
 
       def self.by_status_code(status, body, headers)
-        raise QuickPay::API::Error.new(status, body, headers) unless CLASS_MAP[status]
+        return QuickPay::API::Error.new(status, body, headers) unless CLASS_MAP[status]
 
         klass = QuickPay::API::Error.const_get(CLASS_MAP[status])
-        raise klass.new(status, body, headers)
+        klass.new(status, body, headers)
       end
     end
   end
