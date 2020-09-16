@@ -8,53 +8,18 @@
 # Any of these may be changed.
 AllCops:
   TargetRubyVersion: 2.5
+  NewCops: enable
 
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
-
-Style/Alias:
-  EnforcedStyle: prefer_alias_method
-
-Style/DoubleNegation:
-  Enabled: false
-
-Style/NumericLiterals:
-  Enabled: false
-
-Style/SingleLineBlockParams:
-  Enabled: false
-
-Style/MethodMissingSuper:
-  Enabled: false
-
-Style/MissingRespondToMissing:
-  Enabled: false
-
-Style/EmptyMethod:
-  EnforcedStyle: expanded
-
-Naming/VariableNumber:
-  Enabled: false
-
-Naming/AccessorMethodName:
-  Enabled: false
-
-Style/HashSyntax:
-  EnforcedStyle: no_mixed_keys
-
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
-Style/NumericPredicate:
-  Enabled: false
-
-LineLength:
+Layout/LineLength:
   Max: 119 # github diff (ex. +-)
 
-Documentation:
+Lint/MissingSuper:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
   Enabled: false
 
 Metrics/ClassLength:
@@ -62,31 +27,64 @@ Metrics/ClassLength:
   Exclude:
     - "**/spec/**/*"
 
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
 Metrics/ModuleLength:
   CountComments: false
   Exclude:
     - "**/spec/**/*"
 
-Metrics/MethodLength:
-  Enabled: false
-
-Metrics/BlockLength:
-  Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
-
-Metrics/CyclomaticComplexity:
+Metrics/ParameterLists:
   Enabled: false
 
 Metrics/PerceivedComplexity:
   Enabled: false
 
-Metrics/ParameterLists:
+Naming/VariableNumber:
   Enabled: false
 
-FrozenStringLiteralComment:
+Naming/AccessorMethodName:
   Enabled: false
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: no_mixed_keys
+
+Style/MissingRespondToMissing:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
 
 Style/RedundantCondition: # Double pipes(||) on multiline is not so clear.
   Enabled: false
