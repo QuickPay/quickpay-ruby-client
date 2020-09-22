@@ -16,19 +16,19 @@ module QuickPay
       class GatewayTimeout < Error; end
 
       CLASS_MAP = {
-        400 => "BadRequest",
-        401 => "Unauthorized",
-        402 => "PaymentRequired",
-        403 => "Forbidden",
-        404 => "NotFound",
-        405 => "MethodNotAllowed",
-        406 => "NotAcceptable",
-        409 => "Conflict",
-        429 => "TooManyRequest",
-        500 => "InternalServerError",
-        502 => "BadGateway",
-        503 => "ServiceUnavailable",
-        504 => "GatewayTimeout"
+        400 => BadRequest,
+        401 => Unauthorized,
+        402 => PaymentRequired,
+        403 => Forbidden,
+        404 => NotFound,
+        405 => MethodNotAllowed,
+        406 => NotAcceptable,
+        409 => Conflict,
+        429 => TooManyRequest,
+        500 => InternalServerError,
+        502 => BadGateway,
+        503 => ServiceUnavailable,
+        504 => GatewayTimeout
       }.freeze
 
       attr_reader :status, :body, :headers
@@ -45,10 +45,9 @@ module QuickPay
       alias_method :inspect, :to_s
 
       def self.by_status_code(status, body, headers)
-        return QuickPay::API::Error.new(status, body, headers) unless CLASS_MAP[status]
+        return if (200..399).cover? status
 
-        klass = QuickPay::API::Error.const_get(CLASS_MAP[status])
-        klass.new(status, body, headers)
+        CLASS_MAP.fetch(status, QuickPay::API::Error).new(status, body, headers)
       end
     end
   end
