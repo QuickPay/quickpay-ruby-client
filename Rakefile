@@ -4,6 +4,11 @@ require "rubocop/rake_task"
 
 task default: :test
 
+desc "Open an irb/pry session"
+task :console do
+  exec "bin/console"
+end
+
 namespace :test do
   RuboCop::RakeTask.new
 
