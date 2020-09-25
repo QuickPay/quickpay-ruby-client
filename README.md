@@ -19,7 +19,7 @@ or install from Rubygems:
 ```
 $ gem install quickpay-ruby-client
 ```
-  
+
 It is currently tested with Ruby ( >= 2.5.x)
 
 * MRI
@@ -31,7 +31,7 @@ Before doing anything you should register yourself with QuickPay and get access 
 
 ### Create a new API client
 
-First you should create a client instance that is anonymous or authorized with your API key or login credentials provided by QuickPay. 
+First you should create a client instance that is anonymous or authorized with your API key or login credentials provided by QuickPay.
 
 To initialise an anonymous client:
 
@@ -64,7 +64,7 @@ client = QuickPay::API::Client.new(
     connect_timeout: 60,
     json_opts: { symbolize_names: true }
   }
-) 
+)
 ```
 
 ### Sending request
@@ -120,7 +120,7 @@ By default `(get|post|patch|put|delete)` will return JSON parsed body on success
 Response status |  Error    |
 ----------------| ----------|
 `400` | `QuickPay::API::BadRequest`
-`401` | `QuickPay::API::Unauthorized` 
+`401` | `QuickPay::API::Unauthorized`
 `402` | `QuickPay::API::PaymentRequired`
 `403` | `QuickPay::API::Forbidden`
 `404` | `QuickPay::API::NotFound`
@@ -142,18 +142,63 @@ rescue QuickPay::API::Error => e
 end
 ```
 
-Alternatively you can add an error handeling callback to either method.
+You can read more about QuickPay API responses at [https://learn.quickpay.net/tech-talk/api](https://learn.quickpay.net/tech-talk/api).
 
-If a non 2xx or 3xx response is received this callback is called with status, body and headers of the response.
-Aditionally the error that *would* have been thrown is also given to the block.
+### Using block form
+
+Sometimes when you want to look at status or headers `raw` isn't the best option,
+since it also prevents for example the automatic parsing of a JSON body.
+
+In this case it is possible to call `(get|post|patch|put|delete)` with a block.
+
+In this mode, the block is called with status, body and headers of the request,
+while also automatically parsing the body as JSON if the content-type header is present.
+
+The return value when used in this form is the return value of the block
 
 ```ruby
-client.post("/payments", body: { currency: "DKK", order_id: "1212" }) do |status, body, headers, api_error|
-  puts body
+payments = client.get("/payments/") do |status, body, headers|
+  case status
+  when 403
+    []
+  when 200
+    body
+  end
 end
 ```
 
-You can read more about QuickPay API responses at [https://learn.quickpay.net/tech-talk/api](https://learn.quickpay.net/tech-talk/api).
+It is also possible to give the block a 4th parameter to
+catch the error that _would_ have been raised if no block was given.
+
+This parameter is nil when the response is a success
+
+```ruby
+payment = client.get("/payments/#{payment_id}") do |status, body, headers, error|
+  break nil if status == 404
+
+  if error
+    raise error
+  else
+    body
+  end
+end
+```
+
+If you don't care about all of the fields `status`, `body`, `headers` and `error`
+you can just get the specific fields you care about by using named parameters
+
+```ruby
+payments = client.get("/payments/#{payment_id}") do |body:, error:|
+  case error
+  when nil
+    body
+  when QuickPay::API::NotFound
+    nil
+  else
+    raise error
+  end
+end
+```
 
 ## Contributions
 
