@@ -51,7 +51,7 @@ module QuickPay
             raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers) if res.status >= 400
 
             if res.headers["Content-Type"] == "application/json"
-              JSON.parse(res.body, options.dig(:json_opts) || @connection.data.dig(:json_opts))
+              JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
             else
               res.body
             end
