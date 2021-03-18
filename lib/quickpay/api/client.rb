@@ -55,11 +55,7 @@ module QuickPay
               res.body
             end
 
-          if block
-            return block.call(
-              res.status, body, res.headers, error
-            )
-          end
+          return block.call(res.status, body, res.headers, error) if block
 
           raise error if error
 
