@@ -201,6 +201,70 @@ describe QuickPay::API::Client do
     end
   end
 
+  describe "error callbacks" do
+    subject { QuickPay::API::Client.new }
+
+    it "is called for success" do
+      Excon.stub({ path: "/ping" }, {
+                   status: 200,
+                   body: '{"test": "yes"}',
+                   headers: {
+                     "content-type" => "application/json",
+                     "test" => "success with json test"
+                   }
+                 })
+
+      called = false
+      subject.get "/ping", json_opts: { symbolize_names: true } do |status, body, headers, error|
+        called = true
+        _(status).must_equal 200
+        _(body).must_equal test: "yes"
+        _(headers["test"]).must_equal "success with json test"
+        _(error).must_be :nil?
+      end
+      _(called).must_equal true
+    end
+
+    it "is called for non success" do
+      Excon.stub({ path: "/ping" }, {
+                   status: 404,
+                   body: "Not found",
+                   headers: { "test" => "not found test" }
+                 })
+
+      called = false
+      subject.get "/ping", json_opts: { symbolize_names: true } do |status, body, headers, error|
+        called = true
+        _(status).must_equal 404
+        _(body).must_equal "Not found"
+        _(headers["test"]).must_equal "not found test"
+        _(error.class).must_equal QuickPay::API::Error::NotFound
+      end
+      _(called).must_equal true
+    end
+
+    it "applies json convertion to result whenever relevant" do
+      Excon.stub({ path: "/ping" }, {
+                   status: 500,
+                   body: '{"test": "very yes", "error": "Something terrible happened"}',
+                   headers: {
+                     "content-type" => "application/json",
+                     "test" => "fail with json test"
+                   }
+                 })
+
+      called = false
+      subject.get "/ping", json_opts: { symbolize_names: true } do |status, body, headers, error|
+        called = true
+        _(status).must_equal 500
+        _(body[:test]).must_equal "very yes"
+        _(headers["test"]).must_equal "fail with json test"
+        _(error.class).must_equal QuickPay::API::Error::InternalServerError
+      end
+      _(called).must_equal true
+    end
+  end
+
   it "decorates predefined errors" do
     client = QuickPay::API::Client.new
 

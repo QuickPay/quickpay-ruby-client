@@ -26,7 +26,7 @@ module QuickPay
       end
 
       %i[get post patch put delete head].each do |method|
-        define_method(method) do |path, options = {}|
+        define_method(method) do |path, **options, &block|
           headers = DEFAULT_HEADERS.merge(options.fetch(:headers, {}))
           body    = begin
             data = options.fetch(:body, "")
@@ -45,17 +45,21 @@ module QuickPay
             query: options.fetch(:query, {})
           )
 
-          if options.fetch(:raw, false)
-            [res.status, res.body, res.headers]
-          else
-            raise QuickPay::API::Error.by_status_code(res.status, res.body, res.headers) if res.status >= 400
+          return [res.status, res.body, res.headers] if options.fetch(:raw, false)
 
+          error = QuickPay::API::Error.by_status_code(res.status, res.body, res.headers)
+          body  =
             if res.headers["Content-Type"] == "application/json"
               JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
             else
               res.body
             end
-          end
+
+          return block.call(res.status, body, res.headers, error) if block
+
+          raise error if error
+
+          body
         end
       end
     end

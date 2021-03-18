@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+ENV["APP_KIND"] = "console"
+APP_ROOT = File.realdirpath(File.expand_path("..", __dir__))
+$LOAD_PATH.unshift(APP_ROOT)
+
+require "irb"
+require "lib/quickpay/api/client"
+
+CLIENT = QuickPay::API::Client.new
+
+ARGV.clear
+IRB.start

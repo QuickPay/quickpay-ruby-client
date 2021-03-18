@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "minitest", "~> 5.11.3"
+  spec.add_development_dependency "pry"
   spec.add_development_dependency "rake", "~> 12.3.2"
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "simplecov", "~> 0.16.1"
