@@ -2,17 +2,29 @@ module QuickPay
   module API
     class Error < StandardError
       class BadRequest < Error; end
+
       class Unauthorized < Error; end
+
       class PaymentRequired < Error; end
+
       class Forbidden < Error; end
+
       class NotFound < Error; end
+
       class MethodNotAllowed < Error; end
+
       class NotAcceptable < Error; end
+
       class Conflict < Error; end
+
       class TooManyRequest < Error; end
+
       class InternalServerError < Error; end
+
       class BadGateway < Error; end
+
       class ServiceUnavailable < Error; end
+
       class GatewayTimeout < Error; end
 
       CLASS_MAP = {

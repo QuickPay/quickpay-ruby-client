@@ -3,6 +3,8 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "quickpay/api/version"
 
 Gem::Specification.new do |spec|
+  spec.required_ruby_version = ">= 2.5.0" # rubocop:disable Gemspec/RequiredRubyVersion
+
   spec.name          = "quickpay-ruby-client"
   spec.version       = QuickPay::API::VERSION
   spec.authors       = ["QuickPay Developers"]
@@ -17,8 +19,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.5"
-
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "minitest", "~> 5.11.3"
   spec.add_development_dependency "pry"
@@ -26,6 +26,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "simplecov", "~> 0.16.1"
   spec.add_development_dependency "simplecov-console", "~> 0.4.2"
+
+  spec.add_dependency "json", "~> 2.3.0"
 
   spec.add_dependency "excon", "~> 0.71.0"
 end

@@ -16,10 +16,9 @@ require "quickpay/api/client"
 
 Excon.defaults[:mock] = true
 
-# Excon expects two hashes
-
 describe QuickPay::API::Client do
   before do
+    # Excon expects two hashes
     Excon.stub({}, { body: "Uknown Stub", status: 500 })
   end
 
@@ -255,7 +254,7 @@ describe QuickPay::API::Client do
                  })
 
       called = false
-      subject.get "/ping", json_opts: { symbolize_names: true } do |body:, status:, headers:, error:|
+      subject.get "/ping", json_opts: { symbolize_names: true } do |status, body, headers, error|
         called = true
         _(status).must_equal 500
         _(body[:test]).must_equal "very yes"
