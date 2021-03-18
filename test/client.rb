@@ -16,11 +16,9 @@ require "quickpay/api/client"
 
 Excon.defaults[:mock] = true
 
-# Excon expects two hashes
-# rubocop:disable Style/BracesAroundHashParameters
-
 describe QuickPay::API::Client do
   before do
+    # Excon expects two hashes
     Excon.stub({}, { body: "Uknown Stub", status: 500 })
   end
 
@@ -213,4 +211,3 @@ describe QuickPay::API::Client do
     e.inspect.must_equal %(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
   end
 end
-# rubocop:enable Style/BracesAroundHashParameters

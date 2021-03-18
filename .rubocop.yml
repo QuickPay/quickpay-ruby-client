@@ -9,6 +9,9 @@
 AllCops:
   TargetRubyVersion: 2.5
 
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
@@ -27,7 +30,7 @@ Style/NumericLiterals:
 Style/SingleLineBlockParams:
   Enabled: false
 
-Style/MethodMissingSuper:
+Lint/MissingSuper:
   Enabled: false
 
 Style/MissingRespondToMissing:
