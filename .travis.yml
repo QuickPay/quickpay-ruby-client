@@ -6,6 +6,7 @@ rvm:
   - 2.6
   - 3.0
 cache: bundler
+before_script: wget -O ~/.rubocop.yml https://quickpay.github.io/development/.rubocop.yml
 script: bundle exec rake
 notifications:
   slack:
