@@ -2,6 +2,40 @@
 
 ## master
 
+### Breaking changes
+
+The interface has been changed to (https://github.com/QuickPay/quickpay-ruby-client/pull/36):
+
+- always return an array for all request types (incl. when adding the `raw: true` option)
+- order the array as `[body, status, headers]` (was `[status, body, headers]`
+- always parse JSON body unless the `raw: true` option is set
+
+The reasoning is that we almost always want the `body`, but in some case we want `status`and/or `headers` as well. Before we had to set the `raw: true` option, but then a JSON body would not be parsed.
+
+```ruby
+body, = client.get("/ping")
+body, status, = client.get("/ping")
+body, status, headers = client.get("/ping")
+body, status, headers = client.get("/ping", raw: true)
+```
+
+### New features
+
+You can now pass a block to a request:
+
+```ruby
+msg = client.get("/ping") do |body, status, headers, error|
+  case error
+  when nil
+    body["msg"]
+  when QuickPay::API::NotFound
+    nil
+  else
+    raise error
+  end
+end
+```
+
 ## v2.0.3
 
 * Add the possibility of settins options for JSON parser
