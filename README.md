@@ -91,9 +91,11 @@ client.get("/ping") do |body, status, headers|
   puts body.inspect
 end
 ```
-It is even possible to give the block a 4th parameter to catch the error that _would_ have been raised if no block was given. This parameter is nil when the response is a success.
+
+It is even possible to pass the `QuickPay::API::Error` to the block as the 4th parameter to be able to handle the errors that _would_ have otherwise been raised. This parameter is nil when the response is a success.
 
 ```ruby
+# the error is not raised but passed to the block as the fourth parameter
 client.get("/ping") do |body, status, headers, error|
   case error
   when nil
@@ -105,6 +107,9 @@ client.get("/ping") do |body, status, headers, error|
   end
 end
 
+# will raise `QuickPay::API::Error::NotFound` since the fourth block param is not defined
+client.get("/non-existing-path") do |body, status, headers| do
+end
 ```
 
 If you want raw http response body, you can add `:raw => true` parameter:

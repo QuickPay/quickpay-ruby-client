@@ -52,6 +52,9 @@ module QuickPay
           end
 
           if block
+            # Raise error if not specified as fourth block parameter
+            raise error if error && block.parameters.size < 4
+
             block.call(res.body, res.status, res.headers, error)
           else
             raise error if error
