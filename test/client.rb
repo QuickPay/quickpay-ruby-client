@@ -19,7 +19,7 @@ Excon.defaults[:mock] = true
 describe QuickPay::API::Client do
   before do
     # Excon expects two hashes
-    Excon.stub({}, { body: "Uknown Stub", status: 500 })
+    Excon.stub({}, { body: "Unknown Stub", status: 500 })
   end
 
   after do
@@ -38,7 +38,7 @@ describe QuickPay::API::Client do
     )
 
     client = QuickPay::API::Client.new
-    _, _, headers = *client.get("/ping", raw: true)
+    _, _, headers = *client.get("/ping")
 
     _(headers["Accept-Version"]).must_equal "v10"
     _(headers["User-Agent"]).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
@@ -142,7 +142,7 @@ describe QuickPay::API::Client do
       _(called).must_equal true
     end
 
-    it "is called for non success" do
+    it "is called for non success with error block param" do
       Excon.stub({ path: "/ping" }, { status: 404 })
 
       called = subject.get "/ping", json_opts: { symbolize_names: true } do |_, status, _, error|
@@ -152,6 +152,16 @@ describe QuickPay::API::Client do
         true
       end
       _(called).must_equal true
+    end
+
+    it "is not called for non success without error block param" do
+      Excon.stub({ path: "/ping" }, { status: 404 })
+
+      assert_raises QuickPay::API::Error::NotFound do
+        subject.get "/ping", json_opts: { symbolize_names: true } do |_, status|
+          _(status).must_equal 405
+        end
+      end
     end
   end
 
