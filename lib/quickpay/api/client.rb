@@ -45,21 +45,19 @@ module QuickPay
             query: options.fetch(:query, {})
           )
 
-          return [res.status, res.body, res.headers] if options.fetch(:raw, false)
-
           error = QuickPay::API::Error.by_status_code(res.status, res.body, res.headers)
-          body  =
-            if res.headers["Content-Type"] == "application/json"
-              JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
-            else
-              res.body
-            end
 
-          return block.call(res.status, body, res.headers, error) if block
+          if !options.fetch(:raw, false) && res.headers["Content-Type"] =~ %r{application/json}
+            res.body = JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
+          end
 
-          raise error if error
+          if block
+            block.call(res.body, res.status, res.headers, error)
+          else
+            raise error if error
 
-          body
+            [res.body, res.status, res.headers]
+          end
         end
       end
     end
