@@ -16,12 +16,10 @@ require "quickpay/api/client"
 
 Excon.defaults[:mock] = true
 
-# Excon expects two hashes
-# rubocop:disable Style/BracesAroundHashParameters
-
 describe QuickPay::API::Client do
   before do
-    Excon.stub({}, { body: "Uknown Stub", status: 500 })
+    # Excon expects two hashes
+    Excon.stub({}, { body: "Unknown Stub", status: 500 })
   end
 
   after do
@@ -40,10 +38,10 @@ describe QuickPay::API::Client do
     )
 
     client = QuickPay::API::Client.new
-    _, _, headers = *client.get("/ping", raw: true)
+    _, _, headers = *client.get("/ping")
 
-    headers["Accept-Version"].must_equal "v10"
-    headers["User-Agent"].must_equal "quickpay-ruby-client, v2.0.1"
+    _(headers["Accept-Version"]).must_equal "v10"
+    _(headers["User-Agent"]).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
   end
 
   it "handles authentication" do
@@ -58,141 +56,203 @@ describe QuickPay::API::Client do
     )
 
     client = QuickPay::API::Client.new(password: "secret")
-    _, _, headers = *client.get("/ping", raw: true)
+    _, _, headers = *client.get("/ping")
 
-    headers["Authorization"].must_equal "Basic OnNlY3JldA=="
+    _(headers["Authorization"]).must_equal "Basic OnNlY3JldA=="
   end
 
-  it "handles convenient JSON <=> Hash conversion of body" do
-    client = QuickPay::API::Client.new
+  describe "JSON <=> Hash conversion of body" do
+    subject { QuickPay::API::Client.new }
 
-    Excon.stub(
-      { path: "/ping" },
-      lambda do |request_params|
-        {
-          body: request_params[:body],
-          status: 200
-        }
+    it "returns JSON string if content type is not set" do
+      Excon.stub(
+        { path: "/ping" },
+        lambda do |request_params|
+          {
+            body: request_params[:body],
+            status: 200
+          }
+        end
+      )
+
+      # client return JSON string
+      subject.post(
+        "/ping",
+        body: { "foo" => "bar" },
+        headers: { "Content-Type" => "application/json" }
+      ).tap do |response,|
+        _(JSON.parse(response)).must_equal({ "foo" => "bar" })
       end
-    )
-
-    # client return JSON string
-    client.post(
-      "/ping",
-      body: { "foo" => "bar" },
-      headers: { "Content-Type" => "application/json" }
-    ).tap do |response|
-      JSON.parse(response).must_equal({ "foo" => "bar" })
     end
 
-    Excon.stub(
-      { path: "/ping" },
-      lambda do |request_params|
-        {
-          body: request_params[:body],
-          headers: { "Content-Type" => "application/json" },
-          status: 200
-        }
-      end
-    )
+    it "returns ruby Hash if content type is set" do
+      Excon.stub(
+        { path: "/ping" },
+        lambda do |request_params|
+          {
+            body: request_params[:body],
+            headers: { "Content-Type" => "application/json" },
+            status: 200
+          }
+        end
+      )
 
-    # client returns Ruby Hash
-    client.post(
-      "/ping",
-      body: { "foo" => "bar" },
-      headers: { "Content-Type" => "application/json" }
-    ).tap do |response|
-      response.must_equal({ "foo" => "bar" })
+      # client returns Ruby Hash with string keys
+      subject.post(
+        "/ping",
+        body: { "foo" => "bar" },
+        headers: { "Content-Type" => "application/json" }
+      ).tap do |response,|
+        _(response).must_equal({ "foo" => "bar" })
+      end
+
+      # client returns Ruby Hash with symbol keys
+      subject.post(
+        "/ping",
+        body: { "foo" => "bar" },
+        headers: { "Content-Type" => "application/json" },
+        json_opts: { symbolize_names: true }
+      ).tap do |response,|
+        _(response).must_equal({ :foo => "bar" })
+      end
     end
   end
 
-  it "raises predefined errors" do
-    client = QuickPay::API::Client.new
+  describe "request with block" do
+    subject { QuickPay::API::Client.new }
 
-    assert_raises QuickPay::API::Error::BadRequest do
-      Excon.stub({ path: "/ping" }, { status: 400 })
-      client.get("/ping")
+    it "is called for success" do
+      Excon.stub(
+        { path: "/ping" },
+        {
+          status: 200,
+          body: %({"message":"pong"}),
+          headers: { "Content-Type" => "application/json" }
+        }
+      )
+
+      called = subject.get("/ping", json_opts: { symbolize_names: true }) do |body, status, headers, error|
+        _(body[:message]).must_equal "pong"
+        _(status).must_equal 200
+        _(headers["Content-Type"]).must_equal "application/json"
+        _(error).must_be :nil?
+
+        true
+      end
+      _(called).must_equal true
     end
 
-    assert_raises QuickPay::API::Error::Unauthorized do
-      Excon.stub({ path: "/ping" }, { status: 401 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::PaymentRequired do
-      Excon.stub({ path: "/ping" }, { status: 402 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::Forbidden do
-      Excon.stub({ path: "/ping" }, { status: 403 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::NotFound do
+    it "is called for non success with error block param" do
       Excon.stub({ path: "/ping" }, { status: 404 })
-      client.get("/ping")
+
+      called = subject.get "/ping", json_opts: { symbolize_names: true } do |_, status, _, error|
+        _(status).must_equal 404
+        _(error.class).must_equal QuickPay::API::Error::NotFound
+
+        true
+      end
+      _(called).must_equal true
     end
 
-    assert_raises QuickPay::API::Error::MethodNotAllowed do
-      Excon.stub({ path: "/ping" }, { status: 405 })
-      client.get("/ping")
-    end
+    it "is not called for non success without error block param" do
+      Excon.stub({ path: "/ping" }, { status: 404 })
 
-    assert_raises QuickPay::API::Error::NotAcceptable do
-      Excon.stub({ path: "/ping" }, { status: 406 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::Conflict do
-      Excon.stub({ path: "/ping" }, { status: 409 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::TooManyRequest do
-      Excon.stub({ path: "/ping" }, { status: 429 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::InternalServerError do
-      Excon.stub({ path: "/ping" }, { status: 500 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::BadGateway do
-      Excon.stub({ path: "/ping" }, { status: 502 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::ServiceUnavailable do
-      Excon.stub({ path: "/ping" }, { status: 503 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error::GatewayTimeout do
-      Excon.stub({ path: "/ping" }, { status: 504 })
-      client.get("/ping")
-    end
-
-    assert_raises QuickPay::API::Error do
-      Excon.stub({ path: "/ping" }, { status: 418 })
-      client.get("/ping")
+      assert_raises QuickPay::API::Error::NotFound do
+        subject.get "/ping", json_opts: { symbolize_names: true } do |_, status|
+          _(status).must_equal 405
+        end
+      end
     end
   end
 
-  it "decorates predefined errors" do
-    client = QuickPay::API::Client.new
+  describe "Error handling" do
+    it "raises predefined errors" do
+      client = QuickPay::API::Client.new
 
-    e = assert_raises QuickPay::API::Error do
-      Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
-      client.get("/ping")
+      assert_raises QuickPay::API::Error::BadRequest do
+        Excon.stub({ path: "/ping" }, { status: 400 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::Unauthorized do
+        Excon.stub({ path: "/ping" }, { status: 401 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::PaymentRequired do
+        Excon.stub({ path: "/ping" }, { status: 402 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::Forbidden do
+        Excon.stub({ path: "/ping" }, { status: 403 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::NotFound do
+        Excon.stub({ path: "/ping" }, { status: 404 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::MethodNotAllowed do
+        Excon.stub({ path: "/ping" }, { status: 405 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::NotAcceptable do
+        Excon.stub({ path: "/ping" }, { status: 406 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::Conflict do
+        Excon.stub({ path: "/ping" }, { status: 409 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::TooManyRequest do
+        Excon.stub({ path: "/ping" }, { status: 429 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::InternalServerError do
+        Excon.stub({ path: "/ping" }, { status: 500 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::BadGateway do
+        Excon.stub({ path: "/ping" }, { status: 502 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::ServiceUnavailable do
+        Excon.stub({ path: "/ping" }, { status: 503 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error::GatewayTimeout do
+        Excon.stub({ path: "/ping" }, { status: 504 })
+        client.get("/ping")
+      end
+
+      assert_raises QuickPay::API::Error do
+        Excon.stub({ path: "/ping" }, { status: 418 })
+        client.get("/ping")
+      end
     end
 
-    s = %(#<QuickPay::API::Error::Conflict: request={:method=>:get, :path=>"/ping", :body=>"", ) +
-        %(:headers=>{"User-Agent"=>"quickpay-ruby-client, v2.0.1", "Accept-Version"=>"v10"}, :query=>{}}, ) +
-        %(response={:status=>409, :headers=>{"Foo"=>"bar"}, :body=>"Conflict"}>)
+    it "decorates predefined errors" do
+      client = QuickPay::API::Client.new
 
-    e.inspect.must_equal s
+      e = assert_raises QuickPay::API::Error do
+        Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
+        client.get("/ping")
+      end
+
+      s = '#<QuickPay::API::Error::Conflict: request={:method=>:get, :path=>"/ping", :body=>"", ' \
+          ':headers=>{"User-Agent"=>"quickpay-ruby-client, v2.0.3", "Accept-Version"=>"v10"}, :query=>{}}, ' \
+          'response={:status=>409, :headers=>{"Foo"=>"bar"}, :body=>"Conflict"}>'
+
+      _(e.inspect).must_equal s
+    end
   end
 end
-# rubocop:enable Style/BracesAroundHashParameters

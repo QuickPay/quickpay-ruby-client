@@ -15,7 +15,8 @@ module QuickPay
         opts = {
           read_timeout: options.fetch(:read_timeout, 60),
           write_timeout: options.fetch(:write_timeout, 60),
-          connect_timeout: options.fetch(:connect_timeout, 60)
+          connect_timeout: options.fetch(:connect_timeout, 60),
+          json_opts: options.fetch(:json_opts, nil)
         }
 
         opts[:username] = Excon::Utils.escape_uri(username) if username
@@ -25,7 +26,7 @@ module QuickPay
       end
 
       %i[get post patch put delete head].each do |method|
-        define_method(method) do |path, options = {}|
+        define_method(method) do |path, **options, &block|
           headers = DEFAULT_HEADERS.merge(options.fetch(:headers, {}))
           body    = begin
             data = options.fetch(:body, "")
@@ -46,11 +47,9 @@ module QuickPay
 
           res = @connection.request(req)
 
-          if options.fetch(:raw, false)
-            [res.status, res.body, res.headers]
-          else
+          error =
             if res.status >= 400
-              raise QuickPay::API::Error.by_status_code(
+              QuickPay::API::Error.by_status_code(
                 req,
                 status: res.status,
                 headers: res.headers,
@@ -58,7 +57,19 @@ module QuickPay
               )
             end
 
-            res.headers["Content-Type"] == "application/json" ? JSON.parse(res.body) : res.body
+          if !options.fetch(:raw, false) && res.headers["Content-Type"] =~ %r{application/json}
+            res.body = JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
+          end
+
+          if block
+            # Raise error if not specified as fourth block parameter
+            raise error if error && block.parameters.size < 4
+
+            block.call(res.body, res.status, res.headers, error)
+          else
+            raise error if error
+
+            [res.body, res.status, res.headers]
           end
         end
       end

@@ -19,8 +19,8 @@ or install from Rubygems:
 ```
 $ gem install quickpay-ruby-client
 ```
-  
-It is currently tested with Ruby ( >= 2.1.x)
+
+It is currently tested with Ruby ( >= 2.5.x)
 
 * MRI
 * Rubinius (2.0)
@@ -31,7 +31,7 @@ Before doing anything you should register yourself with QuickPay and get access 
 
 ### Create a new API client
 
-First you should create a client instance that is anonymous or authorized with your API key or login credentials provided by QuickPay. 
+First you should create a client instance that is anonymous or authorized with your API key or login credentials provided by QuickPay.
 
 To initialise an anonymous client:
 
@@ -57,22 +57,72 @@ client = QuickPay::API::Client.new(username: ENV["QUICKPAY_LOGIN"], password: EN
 You can also set some connection specific options (default values shown):
 
 ```ruby
-client = Quickpay::API::Client.new(
-  read_timeout: 60,
-  write_timeout: 60,
-  connect_timeout: 60,
-) 
+client = QuickPay::API::Client.new(
+  options: {
+    read_timeout: 60,
+    write_timeout: 60,
+    connect_timeout: 60,
+    json_opts: { symbolize_names: false }
+  }
+)
 ```
-
 
 ### Sending request
 
 You can afterwards call any method described in QuickPay API with corresponding http method and endpoint. These methods are supported currently: `get`, `post`, `put`, `patch`, `delete` and `head`.
 
+Any request will return an array in the form `[body, status, headers]`:
+
 ```ruby
-client.get("/activity").each do |activity|
-  puts activity["id"]
+# Shortest form when interested in the response body only
+body, = client.get("/ping")
+puts body.inspect
+
+# Get all response information
+body, status, headers = client.get("/ping")
+puts body.inspect, status.inspect, headers.inspect
+
+```
+
+You can also do requests in block form:
+
+```ruby
+client.get("/ping") do |body, status, headers|
+  puts body.inspect
 end
+```
+
+It is even possible to pass the `QuickPay::API::Error` to the block as the 4th parameter to be able to handle the errors that _would_ have otherwise been raised. This parameter is nil when the response is a success.
+
+```ruby
+# the error is not raised but passed to the block as the fourth parameter
+client.get("/ping") do |body, status, headers, error|
+  case error
+  when nil
+    body[:id]
+  when QuickPay::API::NotFound
+    nil
+  else
+    raise error
+  end
+end
+
+# will raise `QuickPay::API::Error::NotFound` since the fourth block param is not defined
+client.get("/non-existing-path") do |body, status, headers| do
+end
+```
+
+If you want raw http response body, you can add `:raw => true` parameter:
+
+```ruby
+body, status, headers = client.get("/ping", raw: true)
+
+if status == 200
+  puts JSON.parse(body).inspect
+else
+  # do something else
+end
+
 ```
 
 Beyond the endpoint, the client accepts the following options (default values shown):
@@ -81,30 +131,19 @@ Beyond the endpoint, the client accepts the following options (default values sh
   * `headers: {}`
   * `query: {}`
   * `raw: false`
+  * `json_opts: nil`
+
+Full example:
 
 ```ruby
-response = client.post(
+response, = client.post(
   "/payments/1/capture",
   body: { amount: 100 }.to_json,
   headers: { "Content-Type" => "application/json" },
   query: { "synchronized" => "" },
-  raw: false
+  raw: false,
+  json_opts: { symbolize_names: true }
 )
-
-```
-
-If you want raw http response, headers Please add `:raw => true` parameter:
-
-```ruby
-status, body, headers = client.get("/activity", raw: true)
-
-if status == 200
-  JSON.parse(body).each do |activity|
-    puts activity["id"]
-  end
-else
-  # do something else
-end
 
 ```
 
@@ -116,7 +155,7 @@ By default `(get|post|patch|put|delete)` will return JSON parsed body on success
 Response status |  Error    |
 ----------------| ----------|
 `400` | `QuickPay::API::BadRequest`
-`401` | `QuickPay::API::Unauthorized` 
+`401` | `QuickPay::API::Unauthorized`
 `402` | `QuickPay::API::PaymentRequired`
 `403` | `QuickPay::API::Forbidden`
 `404` | `QuickPay::API::NotFound`
@@ -134,7 +173,7 @@ All exceptions inherits `QuickPay::API::Error`, so you can listen for any api er
 begin
   client.post("/payments", body: { currency: "DKK", order_id: "1212" })
 rescue QuickPay::API::Error => e
-  puts e.body
+  Logger.error "Request `#{e.request[:method]} #{e.request[:path]}` failed with status #{e.response[:status]}"
 end
 ```
 
@@ -153,5 +192,5 @@ To contribute:
 ### Running the specs
 
 ```
-$ bundle exec ruby test/client.rb
+$ bundle exec rake test
 ```

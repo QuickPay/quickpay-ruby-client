@@ -2,22 +2,32 @@ require "bundler/gem_tasks"
 require "rake/testtask"
 require "rubocop/rake_task"
 
-RuboCop::RakeTask.new
+task default: :test
 
-task :opts do
-  ENV["TESTOPTS"] = "--verbose"
+desc "Open an irb/pry session"
+task :console do
+  exec "bin/console"
 end
 
-desc "Run tests with verbose output"
-task "test:verbose" => %i[opts test]
+namespace :test do
+  RuboCop::RakeTask.new
 
-desc "Run tests"
-task :test do |t|
-  Rake::TestTask.new(t.name) do |tt|
-    tt.libs << "."
-    tt.test_files = Dir.glob("test/*.rb")
-    tt.warning = false
+  task :opts do
+    ENV["TESTOPTS"] = "--verbose"
   end
+
+  desc "Run tests"
+  task :specs do |t|
+    Rake::TestTask.new(t.name) do |tt|
+      tt.libs << "."
+      tt.test_files = Dir.glob("test/*.rb")
+      tt.warning = false
+    end
+  end
+
+  desc "Run tests with verbose output"
+  task verbose: %i[opts test]
 end
 
-task default: %i[test rubocop]
+desc "Run test suite"
+task test: ["test:specs", "test:rubocop"]
