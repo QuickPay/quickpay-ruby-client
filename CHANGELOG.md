@@ -21,7 +21,7 @@ body, status, headers = client.get("/ping", raw: true)
 
 ### New features
 
-You can now pass a block to a request:
+You can now pass a block to a request (https://github.com/QuickPay/quickpay-ruby-client/pull/32):
 
 ```ruby
 msg = client.get("/ping") do |body, status, headers, error|
