@@ -44,7 +44,7 @@ module QuickPay
             path,
             scrub_body(body.dup, headers["Content-Type"]),
             headers,
-            options.fetch(:query, nil)
+            options.fetch(:query, {})
           ).freeze
 
           res = @connection.request(**req.to_h)

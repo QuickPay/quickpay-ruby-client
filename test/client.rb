@@ -245,24 +245,38 @@ describe QuickPay::API::Client do
 
       e = assert_raises QuickPay::API::Error do
         Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
-        client.get("/ping")
+        client.post(
+          "/ping",
+          body: "foo=bar&baz=qux",
+          headers: { "Content-Type" => "application/x-www-form-urlencoded" }
+        )
       end
-      _(e.inspect).must_equal(
-        '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"} ' \
-        'request=#<struct QuickPay::API::Client::Request method=:get, path="/ping", body="", ' \
-        'headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", "Accept-Version"=>"v10"}, query=nil>>'
-      )
+      _(e.status).must_equal 409
+      _(e.body).must_equal "Conflict"
+      _(e.headers).must_equal({ "Foo" => "bar" })
+      _(e.request.method).must_equal :post
+      _(e.request.body).must_equal "foo=bar&baz=qux"
+      _(e.request.headers.fetch("Accept-Version")).must_equal "v10"
+      _(e.request.headers.fetch("User-Agent")).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
+      _(e.request.query).must_equal({})
 
       e = assert_raises QuickPay::API::Error do
         Excon.stub({ path: "/upload" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
-        client.post("/upload", body: "binary data", headers: { "Content-Type" => "image/png" })
+        client.post(
+          "/upload",
+          body: "binary data",
+          headers: { "Content-Type" => "image/png" },
+          query: { "foo" => "bar" }
+        )
       end
-      _(e.inspect).must_equal(
-        '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"} ' \
-        'request=#<struct QuickPay::API::Client::Request method=:post, path="/upload", ' \
-        'body="<scrubbed for Content-Type image/png>", headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", '\
-        '"Accept-Version"=>"v10", "Content-Type"=>"image/png"}, query=nil>>'
-      )
+
+      _(e.inspect).must_equal <<~ERR.strip
+        #<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"} \
+        request=#<struct QuickPay::API::Client::Request method=:post, path="/upload", \
+        body="<scrubbed for Content-Type image/png>", \
+        headers={"User-Agent"=>"quickpay-ruby-client, v#{QuickPay::API::VERSION}", \
+        "Accept-Version"=>"v10", "Content-Type"=>"image/png"}, query={"foo"=>"bar"}>>
+      ERR
     end
   end
 end
