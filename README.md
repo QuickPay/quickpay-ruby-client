@@ -171,10 +171,25 @@ All exceptions inherits `QuickPay::API::Error`, so you can listen for any api er
 
 ```ruby
 begin
-  client.post("/payments", body: { currency: "DKK", order_id: "1212" })
+  client.post("/payments", body: { currency: "DKK", order_id: "1212" }, headers: { "Content-Type" => "application/json" })
 rescue QuickPay::API::Error => e
-  puts e.body
+  puts e.inspect
 end
+```
+
+Example error object:
+
+```
+#<QuickPay::API::Error::NotFound:
+  status=404,
+  body="404 Not Found",
+  headers={"Server"=>"nginx", "Date"=>"Sun, 21 Mar 2021 09:10:12 GMT", "Connection"=>"keep-alive", "X-Cascade"=>"pass", "Vary"=>"Origin"}
+  request=#<struct QuickPay::API::Client::Request
+    method=:post,
+    path="/payments",
+    body="{\"currency\":\"DKK\",\"order_id\":\"1212\"}",
+    headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", "Accept-Version"=>"v10", "Content-Type"=>"application/json"},
+    query=nil>>
 ```
 
 You can read more about QuickPay API responses at [https://learn.quickpay.net/tech-talk/api](https://learn.quickpay.net/tech-talk/api).

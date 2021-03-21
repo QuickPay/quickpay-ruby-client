@@ -21,6 +21,8 @@ body, status, headers = client.get("/ping", raw: true)
 
 ### New features
 
+#### Blocks
+
 You can now pass a block to a request (https://github.com/QuickPay/quickpay-ruby-client/pull/32):
 
 ```ruby
@@ -34,6 +36,23 @@ msg = client.get("/ping") do |body, status, headers, error|
     raise error
   end
 end
+```
+
+#### Verbose errors
+
+The `QuickPay::API::Error` now includes the request that yielded the error - for example:
+
+```
+#<QuickPay::API::Error::NotFound:
+  status=404,
+  body="404 Not Found",
+  headers={"Server"=>"nginx", "Date"=>"Sun, 21 Mar 2021 09:10:12 GMT", "Connection"=>"keep-alive", "X-Cascade"=>"pass", "Vary"=>"Origin"}
+  request=#<struct QuickPay::API::Client::Request
+    method=:post,
+    path="/payments",
+    body="{\"currency\":\"DKK\",\"order_id\":\"1212\"}",
+    headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", "Accept-Version"=>"v10", "Content-Type"=>"application/json"},
+    query=nil>>
 ```
 
 ## v2.0.3
