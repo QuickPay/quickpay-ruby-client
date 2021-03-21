@@ -49,7 +49,7 @@ module QuickPay
         @status  = status
         @body    = body
         @headers = headers
-        @request = "#{request[:method].to_s.upcase} #{request[:path]}"
+        @request = request
       end
 
       def to_s

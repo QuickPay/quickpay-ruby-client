@@ -247,8 +247,22 @@ describe QuickPay::API::Client do
         Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
         client.get("/ping")
       end
-      _(e.inspect).must_equal '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", ' \
-                              'headers={"Foo"=>"bar"} request="GET /ping">'
+      _(e.inspect).must_equal(
+        '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"} ' \
+        'request=#<struct QuickPay::API::Client::Request method=:get, path="/ping", body="", ' \
+        'headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", "Accept-Version"=>"v10"}, query=nil>>'
+      )
+
+      e = assert_raises QuickPay::API::Error do
+        Excon.stub({ path: "/upload" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
+        client.post("/upload", body: "binary data", headers: { "Content-Type" => "image/png" })
+      end
+      _(e.inspect).must_equal(
+        '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"} ' \
+        'request=#<struct QuickPay::API::Client::Request method=:post, path="/upload", ' \
+        'body="<scrubbed for Content-Type image/png>", headers={"User-Agent"=>"quickpay-ruby-client, v2.0.3", '\
+        '"Accept-Version"=>"v10", "Content-Type"=>"image/png"}, query=nil>>'
+      )
     end
   end
 end
