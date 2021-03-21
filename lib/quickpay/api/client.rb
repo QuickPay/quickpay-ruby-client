@@ -11,6 +11,8 @@ module QuickPay
         "Accept-Version" => "v10"
       }.freeze
 
+      Request = Struct.new(:method, :path, :body, :headers, :query) # rubocop:disable Lint/StructNewOverride
+
       def initialize(username: nil, password: nil, base_uri: "https://api.quickpay.net", options: {})
         opts = {
           read_timeout: options.fetch(:read_timeout, 60),
@@ -37,15 +39,16 @@ module QuickPay
             end
           end
 
-          res = @connection.request(
-            method: method,
-            path: path,
-            body: body,
-            headers: headers,
-            query: options.fetch(:query, {})
-          )
+          req = Request.new(
+            method,
+            path,
+            scrub_body(body.dup, headers["Content-Type"]),
+            headers,
+            options.fetch(:query, {})
+          ).freeze
 
-          error = QuickPay::API::Error.by_status_code(res.status, res.body, res.headers)
+          res = @connection.request(**req.to_h)
+          error = QuickPay::API::Error.by_status_code(res.status, res.body, res.headers, req)
 
           if !options.fetch(:raw, false) && res.headers["Content-Type"] =~ %r{application/json}
             res.body = JSON.parse(res.body, options[:json_opts] || @connection.data[:json_opts])
@@ -61,6 +64,18 @@ module QuickPay
 
             [res.body, res.status, res.headers]
           end
+        end
+      end
+
+      private
+
+      def scrub_body(body, content_type)
+        return "" if body.to_s.empty?
+
+        if ["application/json", "application/x-www-form-urlencoded"].include?(content_type)
+          body
+        else
+          "<scrubbed for Content-Type #{content_type}>"
         end
       end
     end
