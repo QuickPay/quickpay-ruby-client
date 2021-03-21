@@ -247,7 +247,8 @@ describe QuickPay::API::Client do
         Excon.stub({ path: "/ping" }, { status: 409, body: "Conflict", headers: { "Foo" => "bar" } })
         client.get("/ping")
       end
-      _(e.inspect).must_equal %(#<QuickPay::API::Error::Conflict: status=409, body="Conflict", headers={"Foo"=>"bar"}>)
+      _(e.inspect).must_equal '#<QuickPay::API::Error::Conflict: status=409, body="Conflict", ' \
+                              'headers={"Foo"=>"bar"} request="GET /ping">'
     end
   end
 end

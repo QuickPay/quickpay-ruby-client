@@ -43,23 +43,25 @@ module QuickPay
         504 => GatewayTimeout
       }.freeze
 
-      attr_reader :status, :body, :headers
+      attr_reader :status, :body, :headers, :request
 
-      def initialize(status, body, headers)
+      def initialize(status, body, headers, request)
         @status  = status
         @body    = body
         @headers = headers
+        @request = "#{request[:method].to_s.upcase} #{request[:path]}"
       end
 
       def to_s
-        "#<#{self.class}: status=#{status}, body=#{body.inspect}, headers=#{headers.inspect}>"
+        "#<#{self.class}: status=#{status}, body=#{body.inspect}, " \
+        "headers=#{headers.inspect} request=#{request.inspect}>"
       end
       alias_method :inspect, :to_s
 
-      def self.by_status_code(status, body, headers)
+      def self.by_status_code(status, body, headers, request)
         return if (200..399).cover? status
 
-        CLASS_MAP.fetch(status, QuickPay::API::Error).new(status, body, headers)
+        CLASS_MAP.fetch(status, QuickPay::API::Error).new(status, body, headers, request)
       end
     end
   end
