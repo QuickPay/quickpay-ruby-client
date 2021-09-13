@@ -1,0 +1,20 @@
+name: Test and Lint on Push and PR
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: "ubuntu-20.04"
+    strategy:
+      matrix:
+        ruby:
+          - 2.5
+          - 2.6
+          - 2.7
+          - 3.0
+    steps:
+      - uses: actions/checkout@v2
+      - uses: QuickPay/quickpay-base-action@v2.2
+        with:
+          rubocop: true
+      - run: bundle exec rake
