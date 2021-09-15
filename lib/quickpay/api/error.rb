@@ -54,7 +54,7 @@ module QuickPay
 
       def to_s
         "#<#{self.class}: status=#{status}, body=#{body.inspect}, " \
-        "headers=#{headers.inspect} request=#{request.inspect}>"
+          "headers=#{headers.inspect} request=#{request.inspect}>"
       end
       alias_method :inspect, :to_s
 
