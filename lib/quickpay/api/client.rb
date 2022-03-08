@@ -72,7 +72,7 @@ module QuickPay
       def scrub_body(body, content_type)
         return "" if body.to_s.empty?
 
-        if ["application/json", "application/x-www-form-urlencoded"].include?(content_type)
+        if [%r{application/.*json.*}, %r{application/x-www-form-urlencoded}].any? { |regex| regex.match(content_type) }
           body
         else
           "<scrubbed for Content-Type #{content_type}>"
