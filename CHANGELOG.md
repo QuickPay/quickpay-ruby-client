@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1
+
+* Fixed bug where variations of Content-Type application/json got scrubbed, fx application/json;charset=UTF-8 (https://github.com/QuickPay/quickpay-ruby-client/pull/41)
+
 ## 3.0.0
 
 ### Breaking changes

@@ -20,7 +20,7 @@ or install from Rubygems:
 $ gem install quickpay-ruby-client
 ```
 
-It is currently tested with Ruby ( >= 2.5.x)
+It is currently tested with Ruby ( >= 2.6.x)
 
 * MRI
 * Rubinius (2.0)
