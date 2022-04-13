@@ -46,7 +46,7 @@ jobs:
             require './lib/quickpay/api/version.rb'
             versions = '${{ steps.extract_versions.outputs.versions }}'.strip.split('|').map {|x| Gem::Version.new x }
             unless versions.include? Gem::Version.new(QuickPay::API::VERSION)
-              puts('##[set-output name=version;]' + QuickPay::BaseBackend::VERSION)
+              puts('##[set-output name=version;]' + QuickPay::API::VERSION)
             end
           "
         id: extract_version
