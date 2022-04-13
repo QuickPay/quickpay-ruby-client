@@ -1,6 +1,6 @@
 name: Test and Lint on Push and PR
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   test:
@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - 2.6
-          - 2.7
-          - 3.0
-          - 3.1
+          - "2.6"
+          - "2.7"
+          - "3.0"
+          - "3.1"
     steps:
       - uses: actions/checkout@v2
       - uses: QuickPay/quickpay-base-action@v2.2
@@ -22,3 +22,42 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - run: bundle exec rake
+    publish:
+    runs-on: "ubuntu-20.04"
+    needs: 
+      test
+    if: ${{ github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+      - name: Setup gem credentials
+        run: |
+          mkdir ~/.gem && echo ":rubygems_api_key: ${{secrets.BUNDLE_RUBYGEMS__ORG}}" > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
+      - name: Retrieve versions
+        run: |
+          echo "##[set-output name=versions;]$(gem search '^quickpay-ruby-client$' --all --prerelease | grep -o '\((.*)\)$' | tr -d '() ' | tr ',' "|" | sort)"
+        id: extract_versions
+      - name: Retrieve Current Versions
+        run: |
+          ruby -e "
+            require './lib/quickpay/api/version.rb'
+            versions = '${{ steps.extract_versions.outputs.versions }}'.strip.split('|').map {|x| Gem::Version.new x }
+            unless versions.include? Gem::Version.new(QuickPay::API::VERSION)
+              puts('##[set-output name=version;]' + QuickPay::BaseBackend::VERSION)
+            end
+          "
+        id: extract_version
+      - name: Push gem
+        if: ${{ steps.extract_version.outputs.version != '' }}
+        run: gem build && gem push *.gem
+      - name: Create Release
+        if: ${{ steps.extract_version.outputs.version != '' }}
+        uses: zendesk/action-create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract_version.outputs.version }}
+          release_name: Release ${{ steps.extract_version.outputs.version }}
