@@ -116,6 +116,28 @@ describe QuickPay::API::Client do
         _(response).must_equal({ :foo => "bar" })
       end
     end
+
+    it "returns a ruby Hash if content type is weird application/json" do
+      Excon.stub(
+        { path: "/ping" },
+        lambda do |request_params|
+          {
+            body: request_params[:body],
+            headers: { "Content-Type" => "application/stuff+json" },
+            status: 200
+          }
+        end
+      )
+
+      # client returns Ruby Hash with string keys
+      subject.post(
+        "/ping",
+        body: { "foo" => "bob" },
+        headers: { "Content-Type" => "application/stuff+json" }
+      ).tap do |response,|
+        _(response).must_equal({ "foo" => "bob" })
+      end
+    end
   end
 
   describe "request with block" do
