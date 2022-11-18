@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-console"
 
-  spec.add_dependency "excon", "~> 0.79.0"
-  spec.add_dependency "json", "~> 2.5.0"
+  spec.add_dependency "excon", ">= 0.79"
+  spec.add_dependency "json", "~> 2", ">= 2.5"
 end
