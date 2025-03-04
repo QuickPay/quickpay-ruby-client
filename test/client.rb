@@ -18,22 +18,14 @@ describe QuickPay::API::Client do
     stub_request(:any, //).to_return(body: "Unknown Stub", status: 500)
   end
 
-  it "set default headers" do
-    stub_request(:get, %r{/ping}).to_return { |request| { headers: request.headers, status: 200 } }
+  it "does not smoke" do
+    stub_request(:get, "http://localhost:4242/ping").to_return { |request| { headers: request.headers, status: 200 } }
 
-    client = QuickPay::API::Client.new
+    client = QuickPay::API::Client.new(password: "secret", base_uri: "http://localhost:4242")
     _, _, headers = *client.get("/ping")
 
     _(headers["accept-version"]).must_equal "v10"
     _(headers["user-agent"]).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
-  end
-
-  it "handles authentication" do
-    stub_request(:get, %r{/ping}).to_return { |request| { headers: request.headers, status: 200 } }
-
-    client = QuickPay::API::Client.new(password: "secret")
-    _, _, headers = *client.get("/ping")
-
     _(headers["authorization"]).must_equal "Basic OnNlY3JldA=="
   end
 
@@ -184,7 +176,7 @@ describe QuickPay::API::Client do
       _(e.request.body).must_equal "foo=bar&baz=qux"
       _(e.request.headers["Accept-Version"]).must_equal "v10"
       _(e.request.headers["User-Agent"]).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
-      _(e.request.query).must_equal(nil)
+      _(e.request.query).must_be_nil
 
       e = assert_raises QuickPay::API::Error do
         stub_request(:post, %r{/upload}).to_return(status: 409, body: "Conflict", headers: { "Foo" => "bar" })
