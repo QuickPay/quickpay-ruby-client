@@ -67,6 +67,7 @@ module QuickPay
           net_req.body = req.body
           res = Net::HTTP.start(
             uri.hostname,
+            uri.port,
             use_ssl: uri.scheme == HTTPS,
             open_timeout: @connect_timeout,
             read_timeout: @read_timeout,
