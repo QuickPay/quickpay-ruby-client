@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.2
+
+Make overwritten Authorization header possible again.
+
+## 4.0.1
+
+Fix so that settings port number is no longer ignored
+
+## 4.0.0
+
+Replace Excon with std lib Net::HTTP, so raised errors will have different underlying errors.
+The returned header keys are all lowercase.
+
 ## 3.0.1
 
 * Fixed bug where variations of Content-Type application/json got scrubbed, fx application/json;charset=UTF-8 (https://github.com/QuickPay/quickpay-ruby-client/pull/41)
