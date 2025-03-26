@@ -62,8 +62,9 @@ module QuickPay
           if (query = req.query) && query.any?
             uri.query = URI.encode_www_form(req.query)
           end
-          net_req = method_class.new(uri, req.headers)
+          net_req = method_class.new(uri)
           net_req.basic_auth(@username, @password) if @username || @password
+          req.headers.each { |key, value| net_req[key] = value }
           net_req.body = req.body
           res = Net::HTTP.start(
             uri.hostname,
