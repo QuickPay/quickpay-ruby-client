@@ -29,6 +29,17 @@ describe QuickPay::API::Client do
     _(headers["authorization"]).must_equal "Basic OnNlY3JldA=="
   end
 
+  it "overwrites Authorization header if already set" do
+    stub_request(:get, "http://localhost:4242/ping").to_return { |request| { headers: request.headers, status: 200 } }
+
+    client = QuickPay::API::Client.new(password: "secret", base_uri: "http://localhost:4242")
+    _, _, headers = *client.get("/ping", headers: { Authorization: "Basic OnRlc3RfdXNlcg==" })
+
+    _(headers["accept-version"]).must_equal "v10"
+    _(headers["user-agent"]).must_equal "quickpay-ruby-client, v#{QuickPay::API::VERSION}"
+    _(headers["authorization"]).must_equal "Basic OnRlc3RfdXNlcg=="
+  end
+
   describe "JSON <=> Hash conversion of body" do
     subject { QuickPay::API::Client.new }
 
