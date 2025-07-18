@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.3
+
+Limit json dependency to < 2.11 to avoid potential breaking changes in json gem 2.11.0
+
 ## 4.0.2
 
 Make overwritten Authorization header possible again.

@@ -19,5 +19,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "json", "~> 2", ">= 2.5"
+  # Allow 2.0 through 2.10.X to avoid breaking changes in 2.11.0
+  spec.add_dependency "json", "~> 2.0", "< 2.11"
 end
