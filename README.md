@@ -1,5 +1,5 @@
 # QuickPay::API::Client
-
+ 
 [![Build Status](https://travis-ci.org/QuickPay/quickpay-ruby-client.svg)](https://travis-ci.org/QuickPay/quickpay-ruby-client)
 
 The `quickpay-ruby-client` gem is a official client for [QuickPay API](https://learn.quickpay.net/tech-talk/api). The Quickpay API enables you to accept payments in a secure and reliable manner.
